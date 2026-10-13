@@ -244,11 +244,24 @@
 
 .skill-category {
     color: #00d9ff;
-    font-size: 10px;
+    font-size: 13px;
     font-weight: 800;
     letter-spacing: 2px;
     margin-bottom: 10px;
 }
+
+/*view skill details */
+.view-skill-link{
+    display: inline-block;
+    margin-top: 12px;
+    color: #65a7ff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.view-skill-link:hover{
+    color: #a58bff;
+}
+
 
 
 /* CARD TEXT */
@@ -406,3 +419,5 @@
         width: 100%;
     }
 }
+
+

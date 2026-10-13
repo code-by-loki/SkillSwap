@@ -121,13 +121,14 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 25px;
+    gap: 45px;
 }
 
 /* Individual navigation links */
 .nav-links a {
     color: #c3cbe0;
-    font-size: 14px;
+    font-size: 24px;
+    font-weight: 400;
     transition: color 0.3s ease;
 }
 
@@ -150,11 +151,12 @@ p {
     padding: 10px 16px;
     border: 1px solid #353e60;
     border-radius: 8px;
-    transition: background 0.3s ease;
+    background: linear-gradient(135deg,#c067db, #8b5cf6);
+    transition: transform 0.3s ease;
 }
 
 .login-btn:hover {
-    background-color: #1b2341;
+   transform: translateY(-3px);
 }
 
 /* Register button */
@@ -381,13 +383,14 @@ p {
 
 .card-two {
     top: 155px;
-    right: 0;
+    left: 53%;
+    
     animation-delay: 0.7s;
 }
 
 .card-three {
-    bottom: 15px;
-    left: 20px;
+    bottom: 5px;
+    left: 0px;
     animation-delay: 1.4s;
 }
 

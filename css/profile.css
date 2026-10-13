@@ -261,3 +261,26 @@
         width: 100%;
     }
 }
+
+.profile-top .profile-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 0;
+}
+
+@media (max-width: 650px) {
+    .profile-top .profile-actions {
+        width: 100%;
+    }
+
+    .profile-top .profile-actions button {
+        flex: 1;
+    }
+}
+@media (max-width: 650px) {
+    .profile-top .profile-actions .edit-button {
+        width: auto;
+    }
+}
