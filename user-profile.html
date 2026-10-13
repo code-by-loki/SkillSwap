@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>User Profile | SkillSwap</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/user-profile.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="user-navbar">
+        <a href="index.html" class="user-logo">
+            <img src="images/skillswap-logo.png" alt="SkillSwap Logo">
+            <span>SkillSwap</span>
+        </a>
+
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="explore.html">Explore Skills</a>
+            <a href="profile.html">My Profile</a>
+        </nav>
+    </header>
+
+    <main class="user-container">
+
+        <a href="explore.html" class="back-link">
+            ← Back to Explore Skills
+        </a>
+
+        <!-- Profile Hero -->
+        <section class="user-hero">
+
+            <div class="user-avatar" id="userAvatar">A</div>
+
+            <div class="user-intro">
+                <span class="member-label">SKILLSWAP COMMUNITY MEMBER</span>
+
+                <h1 id="userName">Arun Kumar</h1>
+
+                <p id="userBio">
+                    I enjoy sharing my knowledge and learning new things
+                    from people in the community.
+                </p>
+
+                <span class="availability">
+                    ● Open to skill exchange
+                </span>
+            </div>
+
+        </section>
+
+        <!-- Profile Details -->
+        <section class="user-content">
+
+            <div class="user-main">
+
+                <article class="user-panel">
+                    <h2>Skills I Can Teach</h2>
+                    <p class="panel-description">
+                        Skills I can share with the community.
+                    </p>
+
+                    <div class="user-skill-list" id="teachSkillList">
+                        <span class="user-skill">Java</span>
+                        <span class="user-skill">HTML</span>
+                        <span class="user-skill">CSS</span>
+                    </div>
+                </article>
+
+                <article class="user-panel">
+                    <h2>Skills I Want to Learn</h2>
+                    <p class="panel-description">
+                        Skills I want to learn from others.
+                    </p>
+
+                    <div class="user-skill-list" id="learnSkillList">
+                        <span class="user-skill">UI/UX Design</span>
+                        <span class="user-skill">Photography</span>
+                    </div>
+                </article>
+
+                <article class="user-panel about-panel">
+                    <h2>About Me</h2>
+                    <p id="userAbout">
+                        I believe everyone has something valuable to teach.
+                        My goal is to exchange knowledge, improve my skills,
+                        and help others grow.
+                    </p>
+                </article>
+
+            </div>
+
+            <!-- Exchange Request Card -->
+            <aside class="exchange-card">
+
+                <span class="exchange-icon">🤝</span>
+
+                <h2>Learn Together</h2>
+
+                <p>
+                    Interested in learning from this person?
+                    Send a skill exchange request to start connecting.
+                </p>
+
+                <label for="requestSkill">Skill you want to learn</label>
+
+                <select id="requestSkill">
+                    <option value="">Choose a skill</option>
+                    <option value="Java">Java</option>
+                    <option value="HTML">HTML</option>
+                    <option value="CSS">CSS</option>
+                </select>
+
+                <label for="offerSkill">Skill you can offer</label>
+
+                <input
+                    type="text"
+                    id="offerSkill"
+                    placeholder="Example: JavaScript">
+
+                <button type="button" id="sendRequestBtn">
+                    Send Exchange Request →
+                </button>
+
+                <p id="requestMessage" aria-live="polite"></p>
+
+                <div class="exchange-note">
+                    <span>💡</span>
+                    <p>
+                        SkillSwap works best when both people share
+                        knowledge with each other.
+                    </p>
+                </div>
+
+            </aside>
+
+        </section>
+
+    </main>
+
+    <footer class="user-footer">
+        <p>&copy; 2026 SkillSwap. Learn together, grow together.</p>
+    </footer>
+
+    <script src="js/user-profile.js"></script>
+</body>
+</html>

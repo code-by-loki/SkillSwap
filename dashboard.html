@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | SkillSwap</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar">
+
+        <a href="index.html" class="logo">
+            <img src="images/skillswap-logo.png"
+                 alt="SkillSwap Logo"
+                 class="logo-image">
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="explore.html">Explore Skills</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="about.html">About</a>
+        </nav>
+
+        <div class="nav-buttons">
+            <a href="profile.html" class="login-btn">My Profile</a>
+            <button type="button" id="dashboardLogout"
+                    class="register-btn">Logout</button>
+        </div>
+
+    </header>
+
+
+    <main class="dashboard-container">
+
+        <!-- Welcome -->
+        <section class="dashboard-welcome">
+
+            <div>
+                <p class="section-label">YOUR LEARNING SPACE</p>
+
+                <h1>Welcome back, <span id="dashboardName">Learner</span>!</h1>
+
+                <p>
+                    Keep learning, share your knowledge,
+                    and make progress every day.
+                </p>
+            </div>
+
+            <a href="explore.html" class="dashboard-primary-btn">
+                + Explore Skills
+            </a>
+
+        </section>
+
+
+        <!-- Summary Cards -->
+        <section class="dashboard-stats">
+
+            <article class="stat-card">
+                <div class="stat-icon">📚</div>
+                <p>My Skills</p>
+                <h2 id="mySkillsCount">0</h2>
+                <a href="my-skills.html">Manage skills →</a>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">📩</div>
+                <p>Pending Requests</p>
+                <h2 id="pendingRequestsCount">0</h2>
+                <a href="requests.html">View requests →</a>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">📅</div>
+                <p>Upcoming Sessions</p>
+                <h2 id="upcomingSessionsCount">0</h2>
+                <a href="sessions.html">View sessions →</a>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <p>Learning Progress</p>
+                <h2 id="learningProgress">0%</h2>
+                <a href="progress.html">View progress →</a>
+            </article>
+
+        </section>
+
+
+        <!-- Main Dashboard Grid -->
+        <section class="dashboard-grid">
+
+            <!-- Skills -->
+            <article class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">YOUR KNOWLEDGE</p>
+                        <h2>My Skills</h2>
+                    </div>
+
+                    <a href="my-skills.html">View all →</a>
+                </div>
+
+                <div id="dashboardSkills" class="dashboard-list">
+
+                    <div class="empty-state">
+                        <span>💡</span>
+                        <p>Your skills will appear here.</p>
+                    </div>
+
+                </div>
+
+                <a href="my-skills.html" class="panel-action">
+                    Manage My Skills
+                </a>
+
+            </article>
+
+
+            <!-- Requests -->
+            <article class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">STAY CONNECTED</p>
+                        <h2>Recent Requests</h2>
+                    </div>
+
+                    <a href="requests.html">View all →</a>
+                </div>
+
+                <div id="dashboardRequests" class="dashboard-list">
+
+                    <div class="empty-state">
+                        <span>🤝</span>
+                        <p>Your requests will appear here.</p>
+                    </div>
+
+                </div>
+
+                <a href="requests.html" class="panel-action">
+                    Manage Requests
+                </a>
+
+            </article>
+
+
+            <!-- Sessions -->
+            <article class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">KEEP LEARNING</p>
+                        <h2>Upcoming Sessions</h2>
+                    </div>
+
+                    <a href="sessions.html">View all →</a>
+                </div>
+
+                <div id="dashboardSessions" class="dashboard-list">
+
+                    <div class="empty-state">
+                        <span>🗓️</span>
+                        <p>Your upcoming sessions will appear here.</p>
+                    </div>
+
+                </div>
+
+                <a href="sessions.html" class="panel-action">
+                    View All Sessions
+                </a>
+
+            </article>
+
+
+            <!-- Quick Actions -->
+            <article class="dashboard-panel quick-actions-panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <p class="section-label">GET STARTED</p>
+                        <h2>Quick Actions</h2>
+                    </div>
+                </div>
+
+                <a href="explore.html" class="quick-action">
+                    <span>🔎</span>
+                    <div>
+                        <h3>Discover Skills</h3>
+                        <p>Find something new to learn.</p>
+                    </div>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a href="my-skills.html" class="quick-action">
+                    <span>✨</span>
+                    <div>
+                        <h3>Share a Skill</h3>
+                        <p>Tell others what you can teach.</p>
+                    </div>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a href="saved.html" class="quick-action">
+                    <span>❤️</span>
+                    <div>
+                        <h3>Saved Skills</h3>
+                        <p>Return to skills you bookmarked.</p>
+                    </div>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a href="settings.html" class="quick-action">
+                    <span>⚙️</span>
+                    <div>
+                        <h3>Settings</h3>
+                        <p>Manage your preferences.</p>
+                    </div>
+                    <span class="action-arrow">→</span>
+                </a>
+
+            </article>
+
+        </section>
+
+
+        <!-- Learning Motivation -->
+        <section class="dashboard-motivation">
+
+            <div class="motivation-icon">🚀</div>
+
+            <div>
+                <h2>Every expert was once a beginner.</h2>
+                <p>
+                    Keep showing up, keep sharing,
+                    and celebrate every step forward.
+                </p>
+            </div>
+
+            <a href="progress.html">My Progress →</a>
+
+        </section>
+
+        <p id="dashboardMessage" class="dashboard-message"
+           role="status" aria-live="polite"></p>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <a href="index.html" class="logo">
+            <img src="images/skillswap-logo.png"
+                 alt="SkillSwap Logo"
+                 class="logo-image">
+        </a>
+
+        <p>Learn together. Grow together.</p>
+
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="explore.html">Explore Skills</a>
+            <a href="about.html">About Us</a>
+        </div>
+
+        <p class="copyright">
+            &copy; 2026 SkillSwap. All rights reserved.
+        </p>
+
+    </footer>
+
+    <script src="js/dashboard.js"></script>
+
+</body>
+</html>

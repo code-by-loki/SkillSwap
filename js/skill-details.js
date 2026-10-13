@@ -152,6 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const requestButton = document.getElementById("requestButton");
     const requestMessage = document.getElementById("requestMessage");
 
+    if (requestButton && requestMessage) {
     requestButton.addEventListener("click", function () {
         requestMessage.textContent =
             "Demo only: Your request to learn " + skill.title +
@@ -159,5 +160,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         requestMessage.style.color = "#65a7ff";
     });
+}
 
 });

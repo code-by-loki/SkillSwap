@@ -1,17 +1,45 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    // Get HTML elements
     const searchInput = document.getElementById("skillSearch");
     const searchButton = document.getElementById("searchButton");
     const categoryButtons = document.querySelectorAll(".category-btn");
     const skillCards = document.querySelectorAll(".explore-card");
     const noResults = document.getElementById("noResults");
 
-    let selectedCategory = "All";
+    // Read category from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const requestedCategory = urlParams.get("category");
 
+    // Allow only categories available on the Explore page
+    const validCategories = [
+        "Programming",
+        "Design",
+        "Languages",
+        "Photography",
+        "Music"
+    ];
+
+    let selectedCategory = validCategories.includes(requestedCategory)
+        ? requestedCategory
+        : "All";
+
+    // Set the active category button on page load
+    categoryButtons.forEach(function (button) {
+        button.classList.toggle(
+            "active",
+            button.dataset.category === selectedCategory
+        );
+    });
+
+    // Filter skills based on search text and category
     function filterSkills() {
 
-        const searchText = searchInput.value.toLowerCase().trim();
+        const searchText = searchInput
+            ? searchInput.value.toLowerCase().trim()
+            : "";
+
         let visibleCount = 0;
 
         skillCards.forEach(function (card) {
@@ -34,14 +62,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
 
-        noResults.style.display =
-            visibleCount === 0 ? "block" : "none";
+        // Show or hide the no-results message
+        if (noResults) {
+            noResults.hidden = visibleCount !== 0;
+        }
     }
 
-    searchButton.addEventListener("click", filterSkills);
+    // Search button
+    if (searchButton) {
+        searchButton.addEventListener("click", filterSkills);
+    }
 
-    searchInput.addEventListener("input", filterSkills);
+    // Live search while typing
+    if (searchInput) {
+        searchInput.addEventListener("input", filterSkills);
 
+        // Press Enter to search
+        searchInput.addEventListener("keydown", function (event) {
+            if (event.key === "Enter") {
+                filterSkills();
+            }
+        });
+    }
+
+    // Category button filtering
     categoryButtons.forEach(function (button) {
 
         button.addEventListener("click", function () {
@@ -58,5 +102,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     });
+
+    // Apply URL category filter when the page first loads
+    filterSkills();
 
 });

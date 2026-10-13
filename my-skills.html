@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Skills | SkillSwap</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/my-skills.css">
+</head>
+<body>
+
+    <header class="skills-navbar">
+        <a href="index.html" class="skills-logo">
+            <img src="images/skillswap-logo.png" alt="SkillSwap Logo">
+            <span>SkillSwap</span>
+        </a>
+
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="explore.html">Explore Skills</a>
+            <a href="profile.html">My Profile</a>
+        </nav>
+    </header>
+
+    <main class="my-skills-container">
+
+        <section class="skills-hero">
+            <p class="eyebrow">GROW WITH SKILLSWAP</p>
+            <h1>My Skills</h1>
+            <p>Share what you know. Discover what you can learn.</p>
+        </section>
+
+        <section class="skills-summary">
+            <article class="summary-card">
+                <span class="summary-icon">🎓</span>
+                <div>
+                    <p>Teaching Skills</p>
+                    <h2 id="teachCount">0</h2>
+                </div>
+            </article>
+
+            <article class="summary-card">
+                <span class="summary-icon">📚</span>
+                <div>
+                    <p>Learning Skills</p>
+                    <h2 id="learnCount">0</h2>
+                </div>
+            </article>
+        </section>
+
+        <section class="skill-manager">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Skills I Can Teach</h2>
+                    <p>Help someone learn something new.</p>
+                </div>
+                <button type="button" class="add-btn" id="addTeachBtn">
+                    + Add Skill
+                </button>
+            </div>
+
+            <form id="teachForm" class="skill-form" hidden>
+                <label for="teachSkillInput">Skill name</label>
+                <input
+                    type="text"
+                    id="teachSkillInput"
+                    maxlength="50"
+                    placeholder="Example: Java"
+                    required>
+
+                <label for="teachLevel">Your experience level</label>
+                <select id="teachLevel">
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save Skill</button>
+                    <button type="button" class="cancel-btn" id="cancelTeachBtn">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+
+            <div id="teachSkillList" class="skill-list"></div>
+
+            <p id="teachEmpty" class="empty-message">
+                No teaching skills yet. Add your first skill!
+            </p>
+
+        </section>
+
+        <section class="skill-manager">
+
+            <div class="section-heading">
+                <div>
+                    <h2>Skills I Want to Learn</h2>
+                    <p>Choose your next learning goal.</p>
+                </div>
+                <button type="button" class="add-btn" id="addLearnBtn">
+                    + Add Skill
+                </button>
+            </div>
+
+            <form id="learnForm" class="skill-form" hidden>
+                <label for="learnSkillInput">Skill name</label>
+                <input
+                    type="text"
+                    id="learnSkillInput"
+                    maxlength="50"
+                    placeholder="Example: UI/UX Design"
+                    required>
+
+                <label for="learnLevel">Your current level</label>
+                <select id="learnLevel">
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit" class="save-btn">Save Skill</button>
+                    <button type="button" class="cancel-btn" id="cancelLearnBtn">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+
+            <div id="learnSkillList" class="skill-list"></div>
+
+            <p id="learnEmpty" class="empty-message">
+                No learning goals yet. Add a skill you want to learn!
+            </p>
+
+        </section>
+
+        <p id="skillsMessage" class="skills-message" aria-live="polite"></p>
+
+        <div class="back-dashboard">
+            <a href="dashboard.html">← Back to Dashboard</a>
+        </div>
+
+    </main>
+
+    <footer class="skills-footer">
+        <p>&copy; 2026 SkillSwap. Learn together, grow together.</p>
+    </footer>
+
+    <script src="js/my-skills.js"></script>
+</body>
+</html>

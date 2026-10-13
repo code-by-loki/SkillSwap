@@ -1,4 +1,8 @@
 
+/* ==============================
+   PROFILE NAVIGATION BAR
+============================== */
+
 .profile-navbar {
     display: flex;
     justify-content: space-between;
@@ -26,6 +30,7 @@
 
 .profile-navbar nav {
     display: flex;
+    align-items: center;
     gap: 24px;
     flex-wrap: wrap;
 }
@@ -33,15 +38,21 @@
 .profile-navbar nav a {
     color: #c4cbe0;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 .profile-navbar nav a:hover {
     color: #65a7ff;
 }
 
+/* ==============================
+   PROFILE PAGE CONTAINER
+============================== */
+
 .profile-container {
     width: min(1000px, 90%);
     margin: 30px auto 70px;
+    box-sizing: border-box;
 }
 
 .profile-banner {
@@ -73,7 +84,12 @@
     background: rgba(15, 20, 45, 0.88);
     border: 1px solid rgba(100, 140, 255, 0.25);
     border-radius: 20px;
+    box-sizing: border-box;
 }
+
+/* ==============================
+   PROFILE HEADER ALIGNMENT
+============================== */
 
 .profile-top {
     display: flex;
@@ -85,6 +101,7 @@
 .avatar {
     width: 85px;
     height: 85px;
+    flex: 0 0 85px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,8 +113,8 @@
 }
 
 .profile-info {
-    flex: 1;
-    min-width: 160px;
+    flex: 1 1 180px;
+    min-width: 0;
 }
 
 .profile-info h2,
@@ -108,6 +125,7 @@
 
 .profile-info h2 {
     margin: 0 0 8px;
+    overflow-wrap: anywhere;
 }
 
 .profile-info p,
@@ -125,13 +143,36 @@
     font-size: 12px;
 }
 
+/* ==============================
+   PROFILE ACTION BUTTONS
+============================== */
+
+.profile-top .profile-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 0 1 auto;
+    margin-top: 0;
+}
+
 .edit-button,
 .save-button,
 .cancel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
     padding: 11px 17px;
     border-radius: 8px;
     cursor: pointer;
+    font: inherit;
+    font-size: 14px;
     font-weight: 600;
+    box-sizing: border-box;
+    white-space: nowrap;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .edit-button,
@@ -140,6 +181,50 @@
     border: none;
     color: white;
 }
+
+.edit-button:hover,
+.save-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(36, 107, 255, 0.25);
+}
+
+.cancel-button {
+    color: white;
+    background: transparent;
+    border: 1px solid #56617f;
+}
+
+.cancel-button:hover {
+    border-color: #65a7ff;
+}
+
+/* Dashboard button */
+.dashboard-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 11px 17px;
+    background: linear-gradient(135deg, #3b5bfd, #5e9eff);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    box-sizing: border-box;
+    white-space: nowrap;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dashboard-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 91, 253, 0.25);
+}
+
+/* ==============================
+   PROFILE DETAILS
+============================== */
 
 .profile-divider {
     height: 1px;
@@ -159,9 +244,11 @@
 }
 
 .skill-panel {
+    min-width: 0;
     padding: 20px;
     background: #0b1023;
     border-radius: 14px;
+    box-sizing: border-box;
 }
 
 .skill-panel h3 {
@@ -181,7 +268,12 @@
     border: 1px solid rgba(100, 140, 255, 0.3);
     color: #c9d9ff;
     font-size: 13px;
+    overflow-wrap: anywhere;
 }
+
+/* ==============================
+   EDIT PROFILE FORM
+============================== */
 
 .edit-profile-card[hidden] {
     display: none;
@@ -215,21 +307,21 @@
     outline: 1px solid #65a7ff;
 }
 
-.profile-actions {
+.edit-profile-card .profile-actions {
     display: flex;
+    align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
     margin-top: 15px;
-}
-
-.cancel-button {
-    color: white;
-    background: transparent;
-    border: 1px solid #56617f;
 }
 
 #profileMessage {
     color: #72e6a5;
 }
+
+/* ==============================
+   FOOTER
+============================== */
 
 .profile-footer {
     padding: 25px;
@@ -238,14 +330,40 @@
     border-top: 1px solid #252d47;
 }
 
+/* ==============================
+   TABLET RESPONSIVENESS
+============================== */
+
+@media (max-width: 850px) {
+    .profile-top {
+        align-items: flex-start;
+    }
+
+    .profile-top .profile-actions {
+        flex: 1 1 100%;
+        justify-content: flex-start;
+        margin-left: 105px;
+    }
+}
+
+/* ==============================
+   MOBILE RESPONSIVENESS
+============================== */
+
 @media (max-width: 650px) {
     .profile-navbar {
         align-items: flex-start;
         flex-direction: column;
+        padding: 18px 5%;
     }
 
     .profile-navbar nav {
         gap: 15px;
+    }
+
+    .profile-container {
+        width: 92%;
+        margin-top: 15px;
     }
 
     .profile-card,
@@ -253,34 +371,60 @@
         padding: 20px;
     }
 
+    .profile-top {
+        gap: 15px;
+    }
+
+    .avatar {
+        width: 65px;
+        height: 65px;
+        flex-basis: 65px;
+        font-size: 28px;
+    }
+
+    .profile-info {
+        flex: 1 1 calc(100% - 85px);
+    }
+
+    .profile-top .profile-actions {
+        width: 100%;
+        flex: 1 1 100%;
+        margin-left: 0;
+        justify-content: flex-start;
+    }
+
+    .profile-top .profile-actions button,
+    .profile-top .profile-actions .dashboard-btn {
+        flex: 1 1 auto;
+    }
+
     .profile-skills {
         grid-template-columns: 1fr;
     }
-
-    .edit-button {
-        width: 100%;
-    }
 }
 
-.profile-top .profile-actions {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 0;
-}
-
-@media (max-width: 650px) {
+@media (max-width: 420px) {
     .profile-top .profile-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .profile-top .profile-actions .dashboard-btn {
+        grid-column: 1 / -1;
+    }
+
+    .profile-top .profile-actions button,
+    .profile-top .profile-actions .dashboard-btn {
         width: 100%;
     }
 
-    .profile-top .profile-actions button {
-        flex: 1;
+    .edit-profile-card .profile-actions {
+        flex-direction: column;
+        align-items: stretch;
     }
-}
-@media (max-width: 650px) {
-    .profile-top .profile-actions .edit-button {
-        width: auto;
+
+    .edit-profile-card .profile-actions button {
+        width: 100%;
     }
 }

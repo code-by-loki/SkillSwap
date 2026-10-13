@@ -1,10 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
 
+   
+    // Check login session and registered profile
+    const loggedInUser = sessionStorage.getItem("skillswapDemoSession");
+    const savedProfile = localStorage.getItem("skillswapDemoProfile");
+
+    if (!loggedInUser || !savedProfile) {
+        alert("Please login first to access your profile.");
+        window.location.replace("login.html");
+        return;
+    }
+
+    const profile = JSON.parse(savedProfile);
+
+    if (profile.email !== loggedInUser) {
+        sessionStorage.removeItem("skillswapDemoSession");
+        window.location.replace("login.html");
+        return;
+    }
+
     const editButton = document.getElementById("editButton");
     const cancelButton = document.getElementById("cancelButton");
     const editSection = document.getElementById("editProfileSection");
     const profileForm = document.getElementById("profileForm");
     const message = document.getElementById("profileMessage");
+    const logoutButton = document.getElementById("logoutButton");
+    if (logoutButton) {
+    logoutButton.addEventListener("click", function () {
+        sessionStorage.removeItem("skillswapDemoSession");
+        window.location.href = "login.html";
+    });
+    }
 
     const nameInput = document.getElementById("nameInput");
     const emailInput = document.getElementById("emailInput");
