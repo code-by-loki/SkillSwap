@@ -1,0 +1,266 @@
+
+.details-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 7%;
+    gap: 20px;
+}
+
+.details-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+    text-decoration: none;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.details-logo img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.details-navbar nav {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.details-navbar nav a,
+.back-link {
+    color: #c4cbe0;
+    text-decoration: none;
+}
+
+.details-navbar nav a:hover,
+.back-link:hover {
+    color: #65a7ff;
+}
+
+.details-container {
+    width: min(1100px, 90%);
+    margin: 30px auto 70px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+.skill-hero {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: 35px;
+    padding: clamp(25px, 5vw, 55px);
+    border: 1px solid rgba(100, 140, 255, 0.3);
+    border-radius: 24px;
+    background:
+        radial-gradient(ellipse at top right, rgba(90, 65, 255, 0.22), transparent 55%),
+        #10152c;
+}
+
+.skill-label {
+    color: #70b7ff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.skill-hero h1 {
+    color: white;
+    font-size: clamp(32px, 5vw, 52px);
+    margin: 18px 0;
+}
+
+.skill-hero-content > p {
+    color: #b1bad2;
+    line-height: 1.8;
+}
+
+.skill-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 22px 0;
+}
+
+.skill-meta span {
+    padding: 8px 12px;
+    border: 1px solid #394361;
+    border-radius: 20px;
+    color: #d2dcf5;
+    font-size: 13px;
+}
+
+.request-button {
+    padding: 14px 22px;
+    border: none;
+    border-radius: 9px;
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    background: linear-gradient(100deg, #246bff, #8748ff);
+    cursor: pointer;
+}
+
+.request-button:hover {
+    box-shadow: 0 0 25px rgba(75, 110, 255, 0.35);
+}
+
+.skill-visual {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(105, 130, 255, 0.25);
+    border-radius: 20px;
+    background: rgba(5, 10, 30, 0.65);
+}
+
+.visual-symbol {
+    color: #75baff;
+    font-size: clamp(65px, 9vw, 105px);
+    font-weight: 800;
+    text-shadow: 0 0 35px rgba(65, 120, 255, 0.5);
+}
+
+.visual-caption {
+    color: #9da9c9;
+    font-size: 11px;
+    letter-spacing: 3px;
+}
+
+#requestMessage {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin: 25px 0;
+}
+
+.details-panel {
+    padding: 28px;
+    border: 1px solid rgba(100, 140, 255, 0.23);
+    border-radius: 18px;
+    background: rgba(15, 20, 45, 0.85);
+}
+
+.details-panel h2 {
+    margin-top: 0;
+    color: white;
+    font-size: 22px;
+}
+
+#learningList {
+    padding-left: 22px;
+    color: #b9c4df;
+    line-height: 2.2;
+}
+
+#learningList li::marker {
+    color: #65a7ff;
+}
+
+.teacher-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 22px 0;
+}
+
+.teacher-avatar {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #246bff, #9848ff);
+}
+
+.teacher-profile h3 {
+    color: white;
+    margin: 0 0 7px;
+}
+
+.teacher-profile p,
+.teacher-description,
+.partner-note {
+    color: #a9b2ca;
+    line-height: 1.7;
+}
+
+.partner-note {
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(70, 100, 255, 0.1);
+    font-size: 13px;
+}
+
+.how-panel {
+    margin-top: 25px;
+}
+
+.learning-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.learning-steps > div > span {
+    color: #70b7ff;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.learning-steps h3 {
+    color: white;
+}
+
+.learning-steps p {
+    color: #a9b2ca;
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.details-footer {
+    padding: 25px;
+    text-align: center;
+    color: #a9b2ca;
+    border-top: 1px solid #252d47;
+}
+
+@media (max-width: 750px) {
+    .details-navbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .skill-hero,
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .skill-visual {
+        min-height: 180px;
+    }
+
+    .learning-steps {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}

@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Explore Skills | SkillSwap</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/explore.css">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+
+        <a href="index.html" class="logo">
+            <img
+                src="images/skillswap-logo.png"
+                alt="SkillSwap Logo"
+                class="logo-image"
+            >
+        </a>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="explore.html" class="active">Explore Skills</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="about.html">About</a>
+        </nav>
+
+        <div class="nav-buttons">
+            <a href="login.html" class="login-btn">Login</a>
+            <a href="register.html" class="register-btn">Get Started</a>
+        </div>
+
+    </header>
+
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- Page Heading -->
+        <section class="explore-hero">
+
+            <p class="section-label">DISCOVER • LEARN • GROW</p>
+
+            <h1>Explore <span>Skills</span></h1>
+
+            <p>
+                Discover talented people, learn something new,
+                and share the skills you already know.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="skill-search">
+
+                <input
+                    type="search"
+                    id="skillSearch"
+                    placeholder="Search Java, English, UI/UX..."
+                    aria-label="Search skills"
+                >
+
+                <button type="button" id="searchButton">
+                    Search
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- Categories -->
+        <section class="explore-content">
+
+            <div class="section-heading">
+                <p class="section-label">FIND YOUR INTEREST</p>
+                <h2>Browse Categories</h2>
+            </div>
+
+            <div class="category-list">
+
+                <button class="category-btn active"
+                    data-category="All">All Skills</button>
+
+                <button class="category-btn"
+                    data-category="Programming">💻 Programming</button>
+
+                <button class="category-btn"
+                    data-category="Design">🎨 Design</button>
+
+                <button class="category-btn"
+                    data-category="Languages">🗣️ Languages</button>
+
+                <button class="category-btn"
+                    data-category="Photography">📸 Photography</button>
+
+                <button class="category-btn"
+                    data-category="Music">🎸 Music</button>
+
+            </div>
+
+
+            <!-- Skill Cards -->
+            <div class="explore-grid" id="skillsGrid">
+
+                <article class="explore-card"
+                    data-category="Programming">
+
+                    <div class="explore-icon">💻</div>
+
+                    <p class="skill-category">PROGRAMMING</p>
+
+                    <h3>Java Programming</h3>
+
+                    <p>
+                        Learn Java fundamentals, OOP concepts,
+                        and problem-solving.
+                    </p>
+
+                    <div class="skill-teacher">
+                        <span class="teacher-avatar">A</span>
+                        <div>
+                            <h4>Arun Kumar</h4>
+                            <p>Beginner Friendly</p>
+                        </div>
+                    </div>
+
+                    <a href="user-profile.html" class="card-link">
+                        View Profile →
+                    </a>
+
+                </article>
+
+
+                <article class="explore-card"
+                    data-category="Design">
+
+                    <div class="explore-icon">🎨</div>
+
+                    <p class="skill-category">DESIGN</p>
+
+                    <h3>UI/UX Design</h3>
+
+                    <p>
+                        Explore user interface design,
+                        wireframes, and prototypes.
+                    </p>
+
+                    <div class="skill-teacher">
+                        <span class="teacher-avatar">P</span>
+                        <div>
+                            <h4>Priya S</h4>
+                            <p>Beginner Friendly</p>
+                        </div>
+                    </div>
+
+                    <a href="user-profile.html" class="card-link">
+                        View Profile →
+                    </a>
+
+                </article>
+
+
+                <article class="explore-card"
+                    data-category="Languages">
+
+                    <div class="explore-icon">🗣️</div>
+
+                    <p class="skill-category">LANGUAGES</p>
+
+                    <h3>English Speaking</h3>
+
+                    <p>
+                        Practice everyday English,
+                        pronunciation, and conversations.
+                    </p>
+
+                    <div class="skill-teacher">
+                        <span class="teacher-avatar">R</span>
+                        <div>
+                            <h4>Rahul M</h4>
+                            <p>Conversation Practice</p>
+                        </div>
+                    </div>
+
+                    <a href="user-profile.html" class="card-link">
+                        View Profile →
+                    </a>
+
+                </article>
+
+
+                <article class="explore-card"
+                    data-category="Photography">
+
+                    <div class="explore-icon">📸</div>
+
+                    <p class="skill-category">PHOTOGRAPHY</p>
+
+                    <h3>Photography Basics</h3>
+
+                    <p>
+                        Learn composition, lighting,
+                        and camera fundamentals.
+                    </p>
+
+                    <div class="skill-teacher">
+                        <span class="teacher-avatar">M</span>
+                        <div>
+                            <h4>Meena K</h4>
+                            <p>Practical Learning</p>
+                        </div>
+                    </div>
+
+                    <a href="user-profile.html" class="card-link">
+                        View Profile →
+                    </a>
+
+                </article>
+
+
+                <article class="explore-card"
+                    data-category="Music">
+
+                    <div class="explore-icon">🎸</div>
+
+                    <p class="skill-category">MUSIC</p>
+
+                    <h3>Guitar Basics</h3>
+
+                    <p>
+                        Learn beginner chords,
+                        rhythm, and simple songs.
+                    </p>
+
+                    <div class="skill-teacher">
+                        <span class="teacher-avatar">K</span>
+                        <div>
+                            <h4>Karthik R</h4>
+                            <p>Beginner Friendly</p>
+                        </div>
+                    </div>
+
+                    <a href="user-profile.html" class="card-link">
+                        View Profile →
+                    </a>
+
+                </article>
+
+
+                <article class="explore-card"
+                    data-category="Programming">
+
+                    <div class="explore-icon">🌐</div>
+
+                    <p class="skill-category">PROGRAMMING</p>
+
+                    <h3>Web Development</h3>
+
+                    <p>
+                        Learn HTML, CSS, and JavaScript
+                        to build websites.
+                    </p>
+
+                    <div class="skill-teacher">
+                        <span class="teacher-avatar">S</span>
+                        <div>
+                            <h4>Sanjay V</h4>
+                            <p>Project Based Learning</p>
+                        </div>
+                    </div>
+
+                    <a href="user-profile.html" class="card-link">
+                        View Profile →
+                    </a>
+
+                </article>
+
+            </div>
+
+            <p class="no-results" id="noResults" hidden>
+                No matching skills found. Try another search!
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <a href="index.html" class="logo">
+            <img
+                src="images/skillswap-logo.png"
+                alt="SkillSwap Logo"
+                class="logo-image"
+            >
+        </a>
+
+        <p>Learn together. Grow together.</p>
+
+        <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About Us</a>
+            <a href="how-it-works.html">How It Works</a>
+        </div>
+
+        <p class="copyright">
+            &copy; 2026 SkillSwap. All rights reserved.
+        </p>
+
+    </footer>
+
+    <script src="js/explore.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | SkillSwap</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body>
+
+    <header class="auth-header">
+        <a href="index.html" class="auth-logo">
+            <img src="images/skillswap-logo.png" alt="SkillSwap Logo">
+            <span>SkillSwap</span>
+        </a>
+
+        <a href="register.html" class="auth-nav-link">
+            Create Account
+        </a>
+    </header>
+
+    <main class="auth-container">
+
+        <section class="auth-card">
+
+            <p class="auth-label">WELCOME BACK</p>
+
+            <h1>Login to <span>SkillSwap</span></h1>
+
+            <p class="auth-description">
+                Continue your learning journey with our community.
+            </p>
+
+            <form id="loginForm">
+
+                <label for="loginEmail">Email Address</label>
+                <input
+                    type="email"
+                    id="loginEmail"
+                    placeholder="you@example.com"
+                    required
+                >
+
+                <label for="loginPassword">Password</label>
+                <input
+                    type="password"
+                    id="loginPassword"
+                    placeholder="Enter your password"
+                    required
+                    minlength="6"
+                >
+
+                <button type="submit" class="auth-submit">
+                    Login
+                </button>
+
+                <p id="loginMessage" class="auth-message"
+                   aria-live="polite"></p>
+
+            </form>
+
+            <p class="auth-switch">
+                Don't have an account?
+                <a href="register.html">Sign up</a>
+            </p>
+
+            <a href="index.html" class="back-home">
+                ← Back to Home
+            </a>
+
+        </section>
+
+    </main>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

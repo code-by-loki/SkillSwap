@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | SkillSwap</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+
+    <header class="profile-navbar">
+        <a href="index.html" class="profile-logo">
+            <img src="images/skillswap-logo.png" alt="SkillSwap Logo">
+            <span>SkillSwap</span>
+        </a>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="explore.html">Explore Skills</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <main class="profile-container">
+
+        <section class="profile-banner">
+            <p class="profile-eyebrow">YOUR LEARNING SPACE</p>
+            <h1>My Profile</h1>
+            <p>Show the community what you know and what you want to learn.</p>
+        </section>
+
+        <section class="profile-card">
+
+            <div class="profile-top">
+                <div class="avatar" id="avatar">L</div>
+
+                <div class="profile-info">
+                    <h2 id="displayName">Loki Kumar</h2>
+                    <p id="displayEmail">loki@example.com</p>
+                    <span class="member-badge">SkillSwap Member</span>
+                </div>
+
+                <button type="button" id="editButton" class="edit-button">
+                    Edit Profile
+                </button>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <h3>About Me</h3>
+            <p id="displayBio" class="profile-bio">
+                I'm passionate about technology and enjoy learning new skills
+                while sharing what I know with others.
+            </p>
+
+            <div class="profile-skills">
+
+                <div class="skill-panel">
+                    <h3>Skills I Can Teach</h3>
+                    <div id="teachSkills" class="skill-tags">
+                        <span>Java</span>
+                        <span>HTML</span>
+                    </div>
+                </div>
+
+                <div class="skill-panel">
+                    <h3>Skills I Want to Learn</h3>
+                    <div id="learnSkills" class="skill-tags">
+                        <span>UI/UX Design</span>
+                        <span>Photography</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="edit-profile-card" id="editProfileSection" hidden>
+            <h2>Edit Your Details</h2>
+
+            <form id="profileForm">
+
+                <label for="nameInput">Full Name</label>
+                <input type="text" id="nameInput" required maxlength="60">
+
+                <label for="emailInput">Email Address</label>
+                <input type="email" id="emailInput" required>
+
+                <label for="bioInput">About Me</label>
+                <textarea id="bioInput" rows="4" maxlength="300"
+                    placeholder="Tell us a little about yourself"></textarea>
+
+                <label for="teachInput">Skills You Can Teach</label>
+                <input type="text" id="teachInput"
+                    placeholder="Java, HTML, CSS">
+
+                <label for="learnInput">Skills You Want to Learn</label>
+                <input type="text" id="learnInput"
+                    placeholder="Design, Photography">
+
+                <div class="profile-actions">
+                    <button type="submit" class="save-button">Save Changes</button>
+                    <button type="button" id="cancelButton"
+                        class="cancel-button">Cancel</button>
+                </div>
+
+                <p id="profileMessage" aria-live="polite"></p>
+
+            </form>
+        </section>
+
+    </main>
+
+    <footer class="profile-footer">
+        <p>&copy; 2026 SkillSwap. Learn together, grow together.</p>
+    </footer>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>
