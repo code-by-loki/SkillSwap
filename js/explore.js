@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
 
     // 1. Get HTML elements
@@ -6,15 +5,178 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchButton = document.getElementById("searchButton");
     const clearSearchButton = document.getElementById("clearSearchButton");
 
+    
     const categoryButtons = document.querySelectorAll(".category-btn");
-    const skillCards = Array.from(
-        document.querySelectorAll(".explore-card")
-    );
+    const skillsGrid = document.getElementById("skillsGrid");
+
+let skillCards = Array.from(
+    document.querySelectorAll(".explore-card")
+);
+
+    
+    // Registered users' teach skills
+    const USERS_KEY = "skillswapDemoUsers";
+    const DETAILS_KEY = "skillswapDemoProfileDetailsByUser";
+
+    function renderRegisteredUsers() {
+        let users = [];
+        let allDetails = {};
+
+        try {
+            users = JSON.parse(
+                localStorage.getItem(USERS_KEY) || "[]"
+            );
+
+            allDetails = JSON.parse(
+                localStorage.getItem(DETAILS_KEY) || "{}"
+            );
+        } catch (error) {
+            console.error("Unable to load registered users:", error);
+        }
+
+        if (!Array.isArray(users) || !skillsGrid) return;
+
+        // Remove only previously generated member cards.
+        skillsGrid.querySelectorAll(".registered-user-card")
+            .forEach(card => card.remove());
+
+        const currentUserId =
+            sessionStorage.getItem("skillswapDemoSession");
+
+        users.forEach(function (user) {
+            const details = allDetails[user.id] || {};
+
+            const teachSkills = Array.isArray(details.teachSkills)
+                ? details.teachSkills
+                : [];
+
+            // Don't list members who haven't selected teach skills.
+            teachSkills.forEach(function (skill) {
+                if (!skill || !skill.trim()) return;
+
+                const category = getCategory(skill);
+                const card = document.createElement("article");
+
+                card.className = "explore-card registered-user-card";
+                card.dataset.category = category;
+                card.dataset.memberId = user.id;
+
+                const icon = document.createElement("div");
+                icon.className = "explore-icon";
+                icon.textContent = getSkillIcon(category);
+
+                const categoryLabel = document.createElement("p");
+                categoryLabel.className = "skill-category";
+                categoryLabel.textContent = category.toUpperCase();
+
+                const titleRow = document.createElement("div");
+                titleRow.className = "skill-title-row";
+
+                const title = document.createElement("h3");
+                title.textContent = skill;
+
+                titleRow.appendChild(title);
+
+                const description = document.createElement("p");
+                description.textContent =
+                    "Learn " + skill + " from a SkillSwap member.";
+
+                const teacher = document.createElement("div");
+                teacher.className = "skill-teacher";
+
+                const avatar = document.createElement("span");
+                avatar.className = "teacher-avatar";
+                avatar.textContent =
+                    (details.name || user.name || "?")
+                    .charAt(0).toUpperCase();
+
+                const teacherInfo = document.createElement("div");
+                const teacherName = document.createElement("h4");
+                teacherName.textContent =
+                    details.name || user.name || "SkillSwap Member";
+
+                const teacherLabel = document.createElement("p");
+                teacherLabel.textContent = "Registered Member";
+
+                teacherInfo.append(teacherName, teacherLabel);
+                teacher.append(avatar, teacherInfo);
+
+                card.append(
+                    icon,
+                    categoryLabel,
+                    titleRow,
+                    description,
+                    teacher
+                );
+
+                // Link to the member's profile.
+                const profileLink = document.createElement("a");
+                profileLink.className = "view-skill-link";
+                profileLink.href =
+                    "user-profile.html?userId=" +
+                    encodeURIComponent(user.id);
+                profileLink.textContent = "View Member →";
+
+                card.appendChild(profileLink);
+
+                // Don't show the currently logged-in user in results.
+                if (user.id !== currentUserId) {
+                    skillsGrid.appendChild(card);
+                }
+            });
+        });
+
+        // Include dynamically added member cards in search/sort.
+        skillCards = Array.from(
+            skillsGrid.querySelectorAll(".explore-card")
+        );
+    }
+
+    function getCategory(skill) {
+        const name = skill.toLowerCase();
+
+        if (/java|python|programming|javascript|html|css|web development|coding/.test(name)) {
+            return "Programming";
+        }
+
+        if (/ui.?ux|design|figma|graphic/.test(name)) {
+            return "Design";
+        }
+
+        if (/english|tamil|language|speaking|communication/.test(name)) {
+            return "Languages";
+        }
+
+        if (/photography|camera|photo/.test(name)) {
+            return "Photography";
+        }
+
+        if (/guitar|music|singing|piano/.test(name)) {
+            return "Music";
+        }
+
+        return "All";
+    }
+
+    function getSkillIcon(category) {
+        const icons = {
+            Programming: "💻",
+            Design: "🎨",
+            Languages: "🗣️",
+            Photography: "📸",
+            Music: "🎸",
+            All: "✨"
+        };
+
+        return icons[category] || icons.All;
+    }
+
+    renderRegisteredUsers();
 
     const noResults = document.getElementById("noResults");
     const resultsCount = document.getElementById("resultsCount");
     const sortSkills = document.getElementById("sortSkills");
-    const skillsGrid = document.getElementById("skillsGrid");
+    
 
     // 2. Read category from URL
     const urlParams = new URLSearchParams(window.location.search);

@@ -1,4 +1,6 @@
-
+console.log("notification panel exists:",
+    document.getElementById("notificationPanel")
+);
 /* =========================================
    SKILLSWAP HOME PAGE JAVASCRIPT
 ========================================= */
@@ -146,19 +148,262 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+/* =====================================
+   7. NOTIFICATION SYSTEM
+===================================== */
 
-    /* =====================================
-       7. NOTIFICATION SYSTEM
-    ===================================== */
+const notificationBell = document.getElementById("notificationBell");
+const notificationPanel = document.getElementById("notificationPanel");
+const notificationCount = document.getElementById("notificationCount");
+const notificationList = document.getElementById("notificationList");
+const markAllReadButton = document.getElementById("markAllRead");
+const clearNotificationsButton = document.getElementById("clearNotifications");
 
-    const notificationBell = document.getElementById("notificationBell");
-    const notificationPanel = document.getElementById("notificationPanel");
-    const notificationCount = document.getElementById("notificationCount");
-    const notificationList = document.getElementById("notificationList");
-    const markAllReadButton = document.getElementById("markAllRead");
-    const clearNotificationsButton = document.getElementById("clearNotifications");
+const notificationStorageKey = "skillswapNotifications";
 
-    const notificationStorageKey = "skillswapNotifications";
+// Get logged-in user's ID
+function getCurrentUserId() {
+    return sessionStorage.getItem("skillswapDemoSession");
+}
+
+// Read all notifications
+function getNotifications() {
+    try {
+        const data = JSON.parse(
+            localStorage.getItem(notificationStorageKey) || "[]"
+        );
+
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+// Save all notifications
+function saveNotifications(notifications) {
+    try {
+        localStorage.setItem(
+            notificationStorageKey,
+            JSON.stringify(notifications)
+        );
+        return true;
+    } catch (error) {
+        alert("Unable to save notifications in this browser.");
+        return false;
+    }
+}
+
+// Get only the logged-in user's notifications
+function getCurrentUserNotifications() {
+    const userId = getCurrentUserId();
+
+    if (!userId) {
+        return [];
+    }
+
+    return getNotifications().filter(function (notification) {
+        return String(notification.userId) === String(userId);
+    });
+}
+
+// Update unread notification count
+function updateNotificationCount(notifications) {
+    const unreadCount = notifications.filter(function (notification) {
+        return !notification.read;
+    }).length;
+
+    if (notificationCount) {
+        notificationCount.textContent =
+            unreadCount > 99 ? "99+" : unreadCount;
+
+        notificationCount.hidden = unreadCount === 0;
+    }
+}
+
+// Mark a notification as read
+function markNotificationAsRead(notificationId) {
+    const userId = getCurrentUserId();
+
+    if (!userId) return;
+
+    const notifications = getNotifications();
+
+    const notification = notifications.find(function (item) {
+        return String(item.id) === String(notificationId) &&
+            String(item.userId) === String(userId);
+    });
+
+    if (notification && !notification.read) {
+        notification.read = true;
+        saveNotifications(notifications);
+    }
+}
+
+// Display current user's notifications
+function renderNotifications() {
+    if (!notificationList) return;
+
+    const notifications = getCurrentUserNotifications();
+
+    notificationList.replaceChildren();
+
+    if (notifications.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "no-notifications";
+        emptyMessage.textContent = "No notifications yet.";
+
+        notificationList.appendChild(emptyMessage);
+    } else {
+        notifications.slice().reverse().forEach(function (notification) {
+            const item = document.createElement("div");
+            item.className = "notification-item";
+
+            if (!notification.read) {
+                item.classList.add("unread");
+            }
+
+            item.tabIndex = 0;
+            item.setAttribute("role", "button");
+
+            item.setAttribute(
+                "aria-label",
+                (notification.message || "Notification") +
+                (notification.read ? ", read" : ", unread")
+            );
+
+            const message = document.createElement("p");
+            message.textContent = notification.message || "New notification";
+
+            const time = document.createElement("small");
+            time.textContent = notification.createdAt || "";
+
+            item.append(message, time);
+
+            function openNotification() {
+                markNotificationAsRead(notification.id);
+
+                const text = notification.message || "";
+
+                const isRequestNotification =
+                    /wants to learn|request.*(accepted|rejected)|has been (accepted|rejected)|skill exchange request/i.test(text);
+
+                if (isRequestNotification) {
+                    window.location.href = "requests.html";
+                    return;
+                }
+
+                renderNotifications();
+            }
+
+            item.addEventListener("click", openNotification);
+
+            item.addEventListener("keydown", function (event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openNotification();
+                }
+            });
+
+            notificationList.appendChild(item);
+        });
+    }
+
+    updateNotificationCount(notifications);
+}
+
+// Open and close notification dropdown
+if (notificationBell && notificationPanel) {
+    notificationBell.addEventListener("click", function () {
+        const isOpening = notificationPanel.hidden;
+
+        notificationPanel.hidden = !isOpening;
+
+        notificationBell.setAttribute(
+            "aria-expanded",
+            String(isOpening)
+        );
+
+        if (isOpening) {
+            renderNotifications();
+        }
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", function (event) {
+        if (
+            !event.target.closest(".notification-wrapper") &&
+            !notificationPanel.hidden
+        ) {
+            notificationPanel.hidden = true;
+            notificationBell.setAttribute("aria-expanded", "false");
+        }
+    });
+
+    // Close with Escape
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            notificationPanel.hidden = true;
+            notificationBell.setAttribute("aria-expanded", "false");
+        }
+    });
+}
+
+// Mark only the current user's notifications as read
+if (markAllReadButton) {
+    markAllReadButton.addEventListener("click", function () {
+        const userId = getCurrentUserId();
+
+        if (!userId) {
+            renderNotifications();
+            return;
+        }
+
+        const notifications = getNotifications();
+
+        notifications.forEach(function (notification) {
+            if (String(notification.userId) === String(userId)) {
+                notification.read = true;
+            }
+        });
+
+        if (saveNotifications(notifications)) {
+            renderNotifications();
+        }
+    });
+}
+
+// Clear only the current user's notifications
+if (clearNotificationsButton) {
+    clearNotificationsButton.addEventListener("click", function () {
+        const userId = getCurrentUserId();
+
+        if (!userId) {
+            alert("Please log in to manage notifications.");
+            return;
+        }
+
+        const shouldClear = confirm(
+            "Are you sure you want to clear your notifications?"
+        );
+
+        if (!shouldClear) return;
+
+        const notifications = getNotifications();
+
+        const remainingNotifications = notifications.filter(
+            function (notification) {
+                return String(notification.userId) !== String(userId);
+            }
+        );
+
+        if (saveNotifications(remainingNotifications)) {
+            renderNotifications();
+        }
+    });
+}
+
+// Initial display
+renderNotifications();
 
     // Read notifications from localStorage
     function getNotifications() {
@@ -202,75 +447,91 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Display notifications
-    function renderNotifications() {
-        if (!notificationList) return;
+   
+function renderNotifications() {
+    if (!notificationList) return;
 
-        const notifications = getNotifications();
+    const notifications = getNotifications();
 
-        notificationList.replaceChildren();
+    notificationList.replaceChildren();
 
-        if (notifications.length === 0) {
-            const emptyMessage = document.createElement("p");
-            emptyMessage.className = "no-notifications";
-            emptyMessage.textContent = "No notifications yet.";
+    if (notifications.length === 0) {
+        const emptyMessage = document.createElement("p");
+        emptyMessage.className = "no-notifications";
+        emptyMessage.textContent = "No notifications yet.";
 
-            notificationList.appendChild(emptyMessage);
-        } else {
-            notifications.forEach(function (notification, index) {
-                const item = document.createElement("div");
-                item.className = "notification-item";
+        notificationList.appendChild(emptyMessage);
+    } else {
+        notifications.forEach(function (notification) {
+            const item = document.createElement("div");
+            item.className = "notification-item";
 
-                if (!notification.read) {
-                    item.classList.add("unread");
-                }
+            if (!notification.read) {
+                item.classList.add("unread");
+            }
 
-                item.tabIndex = 0;
-                item.setAttribute("role", "button");
-                item.setAttribute(
-                    "aria-label",
-                    (notification.message || "Notification") +
-                    (notification.read ? ", read" : ", unread")
+            item.tabIndex = 0;
+            item.setAttribute("role", "button");
+
+            item.setAttribute(
+                "aria-label",
+                (notification.message || "Notification") +
+                (notification.read ? ", read" : ", unread")
+            );
+
+            const message = document.createElement("p");
+            message.textContent =
+                notification.message || "New notification";
+
+            const time = document.createElement("small");
+            time.textContent = notification.createdAt || "";
+
+            item.append(message, time);
+
+            function openNotification() {
+                const currentNotifications = getNotifications();
+
+                // Identify this notification by its unique ID.
+                const currentNotification = currentNotifications.find(
+                    function (entry) {
+                        return entry.id === notification.id;
+                    }
                 );
 
-                const message = document.createElement("p");
-                message.textContent = notification.message || "New notification";
-
-                const time = document.createElement("small");
-                time.textContent = notification.createdAt || "";
-
-                item.appendChild(message);
-                item.appendChild(time);
-
-                function markAsRead() {
-                    const currentNotifications = getNotifications();
-
-                    if (
-                        currentNotifications[index] &&
-                        !currentNotifications[index].read
-                    ) {
-                        currentNotifications[index].read = true;
-
-                        if (saveNotifications(currentNotifications)) {
-                            renderNotifications();
-                        }
-                    }
+                if (currentNotification && !currentNotification.read) {
+                    currentNotification.read = true;
+                    saveNotifications(currentNotifications);
                 }
 
-                item.addEventListener("click", markAsRead);
+                // Request notifications navigate to the Requests page.
+                const text = notification.message || "";
+                const isRequestNotification =
+                    /wants to learn|request.*(accepted|rejected)|has been (accepted|rejected)|skill exchange request/i.test(text);
 
-                item.addEventListener("keydown", function (event) {
-                    if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        markAsRead();
-                    }
-                });
+                if (isRequestNotification) {
+                    window.location.href = "requests.html";
+                    return;
+                }
 
-                notificationList.appendChild(item);
+                renderNotifications();
+            }
+
+            item.addEventListener("click", openNotification);
+
+            item.addEventListener("keydown", function (event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openNotification();
+                }
             });
-        }
 
-        updateNotificationCount(notifications);
+            notificationList.appendChild(item);
+        });
     }
+
+    updateNotificationCount(getNotifications());
+}
+
 
     // Open and close dropdown
     if (notificationBell && notificationPanel) {

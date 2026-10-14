@@ -38,40 +38,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Create a notification when a request status changes.
     function createNotification(request, newStatus) {
-        try {
-            const savedData = JSON.parse(
-                localStorage.getItem(notificationStorageKey) || "[]"
-            );
+    const notifications =
+        JSON.parse(localStorage.getItem("skillswapNotifications")) || [];
 
-            const notifications = Array.isArray(savedData)
-                ? savedData
-                : [];
+    const receiverName = request.receiverName || "Another user";
 
-            notifications.unshift({
-                id: Date.now().toString() + Math.random().toString(36).slice(2),
-                message:
-                    "The request from " +
-                    (request.userName || "SkillSwap Member") +
-                    " for " +
-                    (request.wantedSkill || "a skill") +
-                    " has been " +
-                    newStatus.toLowerCase() +
-                    ".",
-                read: false,
-                createdAt: new Date().toLocaleString()
-            });
+    const notification = {
+        id: Date.now().toString(),
+        userId: request.senderId,
+        requestId: request.id,
+        type: "request-status",
+        message:
+            "Your request to learn " +
+            request.wantedSkill +
+            " has been " +
+            newStatus.toLowerCase() +
+            " by " +
+            receiverName +
+            ".",
+        read: false,
+        createdAt: new Date().toLocaleString()
+    };
 
-            localStorage.setItem(
-                notificationStorageKey,
-                JSON.stringify(notifications)
-            );
+    notifications.push(notification);
 
-            return true;
-        } catch (error) {
-            console.error("Could not save notification:", error);
-            return false;
-        }
-    }
+    localStorage.setItem(
+        "skillswapNotifications",
+        JSON.stringify(notifications)
+    );
+}
+
 
     function createElement(tag, className, text) {
         const element = document.createElement(tag);
@@ -101,39 +97,77 @@ document.addEventListener("DOMContentLoaded", function () {
         return date.toLocaleString();
     }
 
-    function updateStatus(index, newStatus) {
-        const requests = getRequests();
+    
+function updateStatus(requestId, newStatus) {
+    const requests = getRequests();
+    const currentUserId =
+        sessionStorage.getItem("skillswapDemoSession");
 
-        if (!requests[index]) {
-            pageMessage.textContent = "Request not found. Please refresh.";
-            return;
-        }
-
-        const request = requests[index];
-
-        if (request.status !== "Pending" && request.status) {
-            pageMessage.textContent =
-                "This request has already been processed.";
-            renderRequests();
-            return;
-        }
-
-        request.status = newStatus;
-
-        if (saveRequests(requests)) {
-            const notificationSaved = createNotification(request, newStatus);
-
-            pageMessage.textContent = notificationSaved
-                ? "Request " + newStatus.toLowerCase() +
-                  ". Notification created."
-                : "Request status updated, but notification could not be saved.";
-
-            renderRequests();
-        }
+    if (!currentUserId) {
+        pageMessage.textContent = "Please log in again.";
+        return;
     }
 
+    // Find the original request using its unique ID.
+    const request = requests.find(function (item) {
+        return String(item.id) === String(requestId);
+    });
+
+    if (!request) {
+        pageMessage.textContent =
+            "Request not found. Please refresh the page.";
+        return;
+    }
+
+    // Only the intended receiver can accept or reject.
+    if (String(request.receiverId) !== String(currentUserId)) {
+        pageMessage.textContent =
+            "You cannot update another user's request.";
+        return;
+    }
+
+    if ((request.status || "Pending") !== "Pending") {
+        pageMessage.textContent =
+            "This request has already been processed.";
+        renderRequests();
+        return;
+    }
+
+    request.status = newStatus;
+
+    if (saveRequests(requests)) {
+        createNotification(request, newStatus);
+
+        pageMessage.textContent =
+            "Request " + newStatus.toLowerCase() + " successfully!";
+
+        renderRequests();
+    }
+}
+
+
     function renderRequests() {
-        const requests = getRequests();
+    const allRequests = getRequests();
+
+    const currentUserId =
+        sessionStorage.getItem("skillswapDemoSession");
+
+    requestsList.replaceChildren();
+    pageMessage.textContent = "";
+
+    if (!currentUserId) {
+        totalRequests.textContent = "0";
+        pendingRequests.textContent = "0";
+        acceptedRequests.textContent = "0";
+
+        emptyState.hidden = false;
+        pageMessage.textContent = "Please log in to view your requests.";
+        return;
+    }
+
+    const requests = allRequests.filter(function (request) {
+        return String(request.receiverId) === String(currentUserId);
+    });
 
         requestsList.replaceChildren();
         pageMessage.textContent = "";
@@ -229,9 +263,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
                 acceptButton.type = "button";
 
-                acceptButton.addEventListener("click", function () {
-                    updateStatus(index, "Accepted");
-                });
+               acceptButton.addEventListener("click", function () {
+               updateStatus(request.id, "Accepted");
+    });         
 
                 const rejectButton = createElement(
                     "button",
@@ -241,7 +275,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 rejectButton.type = "button";
 
                 rejectButton.addEventListener("click", function () {
-                    updateStatus(index, "Rejected");
+                    updateStatus(request.id, "Rejected");
                 });
 
                 actions.append(acceptButton, rejectButton);

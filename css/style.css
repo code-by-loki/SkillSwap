@@ -893,6 +893,25 @@ p {
     transform: translateY(-2px);
 }
 
+/* Notification dropdown fix */
+.notification-wrapper {
+    position: relative;
+    z-index: 2001;
+}
+
+.notification-panel:not([hidden]) {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 99999 !important;
+}
+
+.notification-panel[hidden] {
+    display: none !important;
+}
+
+
 /* Unread count badge */
 .notification-count {
     position: absolute;
