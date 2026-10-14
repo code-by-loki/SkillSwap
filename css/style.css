@@ -979,6 +979,7 @@ p {
 }
 
 /* Mark all read */
+
 .mark-read-btn {
     border: none;
     background: transparent;
@@ -1064,4 +1065,22 @@ p {
         transform: translateX(50%);
         width: 320px;
     }
+}
+
+
+.notification-wrapper {
+    position: relative;
+    z-index: 9999;
+}
+
+.notification-panel:not([hidden]) {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 99999 !important;
+}
+
+.notification-panel[hidden] {
+    display: none !important;
 }
