@@ -421,3 +421,37 @@
 }
 
 
+.skill-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.skill-title-row h3 {
+    margin: 0;
+}
+
+.save-skill-btn {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    border: 1px solid #35405e;
+    border-radius: 50%;
+    background: #11172a;
+    color: #ff7196;
+    font-size: 23px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.save-skill-btn:hover {
+    border-color: #ff7196;
+    transform: scale(1.08);
+}
+
+.save-skill-btn.is-saved {
+    background: #402033;
+    border-color: #ff7196;
+    color: #ff7196;
+}

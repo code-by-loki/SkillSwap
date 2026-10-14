@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SkillSwap | Saved Skills</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/saved.css">
+</head>
+<body>
+
+    <header class="saved-navbar">
+        <a href="index.html" class="saved-logo">SkillSwap</a>
+
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="explore.html">Explore</a>
+            <a href="my-skills.html">My Skills</a>
+            <a href="requests.html">Requests</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+    </header>
+
+    <main class="saved-container">
+
+        <section class="saved-heading">
+            <p class="eyebrow">YOUR COLLECTION</p>
+            <h1>Saved Skills <span>♥</span></h1>
+            <p>
+                Keep track of the skills you want to learn
+                and the people you want to connect with.
+            </p>
+        </section>
+
+        <section class="saved-toolbar">
+            <div>
+                <h2>Your Collection</h2>
+                <p id="savedCount">0 saved skills</p>
+            </div>
+
+            <a href="explore.html" class="explore-link">
+                + Explore Skills
+            </a>
+        </section>
+
+        <section id="savedSkillsList" class="saved-skills-list"></section>
+
+        <section id="emptySavedState" class="empty-saved-state" hidden>
+            <div class="empty-heart">♡</div>
+            <h2>No saved skills yet</h2>
+            <p>
+                Explore the community and save skills
+                that interest you.
+            </p>
+            <a href="explore.html" class="explore-link">
+                Discover Skills
+            </a>
+        </section>
+
+        <p id="savedMessage" class="saved-message" role="status"></p>
+
+    </main>
+
+    <script src="js/saved.js"></script>
+</body>
+</html>

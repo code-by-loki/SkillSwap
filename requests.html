@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SkillSwap | Requests</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/requests.css">
+</head>
+<body>
+
+    <header class="requests-navbar">
+        <a href="index.html" class="logo">SkillSwap</a>
+
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="explore.html">Explore</a>
+            <a href="my-skills.html">My Skills</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+    </header>
+
+    <main class="requests-container">
+
+        <section class="requests-heading">
+            <p class="eyebrow">SKILLS EXCHANGE</p>
+            <h1>Your Requests</h1>
+            <p>Manage your skill exchange requests in one place.</p>
+        </section>
+
+        <section class="request-summary">
+            <div class="summary-card">
+                <span>Total Requests</span>
+                <h2 id="totalRequests">0</h2>
+            </div>
+
+            <div class="summary-card">
+                <span>Pending</span>
+                <h2 id="pendingRequests">0</h2>
+            </div>
+
+            <div class="summary-card">
+                <span>Accepted</span>
+                <h2 id="acceptedRequests">0</h2>
+            </div>
+        </section>
+
+        <section class="requests-list-section">
+            <div class="list-heading">
+                <h2>Exchange Requests</h2>
+                <button id="refreshButton" type="button">
+                    Refresh
+                </button>
+            </div>
+
+            <div id="requestsList" class="requests-list"></div>
+
+            <div id="emptyState" class="empty-state" hidden>
+                <div class="empty-icon">↗</div>
+                <h3>No requests yet</h3>
+                <p>
+                    Visit a member's profile and send a skill exchange request
+                    to see it here.
+                </p>
+                <a href="explore.html" class="explore-button">
+                    Explore Skills
+                </a>
+            </div>
+
+            <p id="pageMessage" class="page-message" role="status"></p>
+        </section>
+
+    </main>
+
+    <script src="js/requests.js"></script>
+</body>
+</html>
