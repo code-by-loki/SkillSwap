@@ -1,6 +1,3 @@
-console.log("notification panel exists:",
-    document.getElementById("notificationPanel")
-);
 /* =========================================
    SKILLSWAP HOME PAGE JAVASCRIPT
 ========================================= */
@@ -148,6 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
 /* =====================================
    7. NOTIFICATION SYSTEM
 ===================================== */
@@ -161,12 +159,10 @@ const clearNotificationsButton = document.getElementById("clearNotifications");
 
 const notificationStorageKey = "skillswapNotifications";
 
-// Get logged-in user's ID
 function getCurrentUserId() {
     return sessionStorage.getItem("skillswapDemoSession");
 }
 
-// Read all notifications
 function getNotifications() {
     try {
         const data = JSON.parse(
@@ -175,11 +171,11 @@ function getNotifications() {
 
         return Array.isArray(data) ? data : [];
     } catch (error) {
+        console.error("Unable to read notifications:", error);
         return [];
     }
 }
 
-// Save all notifications
 function saveNotifications(notifications) {
     try {
         localStorage.setItem(
@@ -193,20 +189,16 @@ function saveNotifications(notifications) {
     }
 }
 
-// Get only the logged-in user's notifications
 function getCurrentUserNotifications() {
     const userId = getCurrentUserId();
 
-    if (!userId) {
-        return [];
-    }
+    if (!userId) return [];
 
     return getNotifications().filter(function (notification) {
         return String(notification.userId) === String(userId);
     });
 }
 
-// Update unread notification count
 function updateNotificationCount(notifications) {
     const unreadCount = notifications.filter(function (notification) {
         return !notification.read;
@@ -220,7 +212,6 @@ function updateNotificationCount(notifications) {
     }
 }
 
-// Mark a notification as read
 function markNotificationAsRead(notificationId) {
     const userId = getCurrentUserId();
 
@@ -239,7 +230,6 @@ function markNotificationAsRead(notificationId) {
     }
 }
 
-// Display current user's notifications
 function renderNotifications() {
     if (!notificationList) return;
 
@@ -251,7 +241,6 @@ function renderNotifications() {
         const emptyMessage = document.createElement("p");
         emptyMessage.className = "no-notifications";
         emptyMessage.textContent = "No notifications yet.";
-
         notificationList.appendChild(emptyMessage);
     } else {
         notifications.slice().reverse().forEach(function (notification) {
@@ -311,11 +300,12 @@ function renderNotifications() {
     updateNotificationCount(notifications);
 }
 
-// Open and close notification dropdown
+/* Open and close dropdown */
 if (notificationBell && notificationPanel) {
-    notificationBell.addEventListener("click", function () {
-        const isOpening = notificationPanel.hidden;
+    notificationBell.addEventListener("click", function (event) {
+        event.stopPropagation();
 
+        const isOpening = notificationPanel.hidden;
         notificationPanel.hidden = !isOpening;
 
         notificationBell.setAttribute(
@@ -328,7 +318,6 @@ if (notificationBell && notificationPanel) {
         }
     });
 
-    // Close when clicking outside
     document.addEventListener("click", function (event) {
         if (
             !event.target.closest(".notification-wrapper") &&
@@ -339,7 +328,6 @@ if (notificationBell && notificationPanel) {
         }
     });
 
-    // Close with Escape
     document.addEventListener("keydown", function (event) {
         if (event.key === "Escape") {
             notificationPanel.hidden = true;
@@ -348,15 +336,13 @@ if (notificationBell && notificationPanel) {
     });
 }
 
-// Mark only the current user's notifications as read
+/* Mark current user's notifications as read */
 if (markAllReadButton) {
-    markAllReadButton.addEventListener("click", function () {
-        const userId = getCurrentUserId();
+    markAllReadButton.addEventListener("click", function (event) {
+        event.stopPropagation();
 
-        if (!userId) {
-            renderNotifications();
-            return;
-        }
+        const userId = getCurrentUserId();
+        if (!userId) return;
 
         const notifications = getNotifications();
 
@@ -372,9 +358,11 @@ if (markAllReadButton) {
     });
 }
 
-// Clear only the current user's notifications
+/* Clear current user's notifications */
 if (clearNotificationsButton) {
-    clearNotificationsButton.addEventListener("click", function () {
+    clearNotificationsButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+
         const userId = getCurrentUserId();
 
         if (!userId) {
@@ -382,15 +370,11 @@ if (clearNotificationsButton) {
             return;
         }
 
-        const shouldClear = confirm(
-            "Are you sure you want to clear your notifications?"
-        );
+        if (!confirm("Are you sure you want to clear your notifications?")) {
+            return;
+        }
 
-        if (!shouldClear) return;
-
-        const notifications = getNotifications();
-
-        const remainingNotifications = notifications.filter(
+        const remainingNotifications = getNotifications().filter(
             function (notification) {
                 return String(notification.userId) !== String(userId);
             }
@@ -402,200 +386,8 @@ if (clearNotificationsButton) {
     });
 }
 
-// Initial display
+/* Initial display */
 renderNotifications();
-
-    // Read notifications from localStorage
-    function getNotifications() {
-        try {
-            const data = JSON.parse(
-                localStorage.getItem(notificationStorageKey) || "[]"
-            );
-
-            return Array.isArray(data) ? data : [];
-        } catch (error) {
-            return [];
-        }
-    }
-
-    // Save notifications to localStorage
-    function saveNotifications(notifications) {
-        try {
-            localStorage.setItem(
-                notificationStorageKey,
-                JSON.stringify(notifications)
-            );
-            return true;
-        } catch (error) {
-            alert("Unable to save notifications in this browser.");
-            return false;
-        }
-    }
-
-    // Update unread count
-    function updateNotificationCount(notifications) {
-        const unreadCount = notifications.filter(function (notification) {
-            return !notification.read;
-        }).length;
-
-        if (notificationCount) {
-            notificationCount.textContent =
-                unreadCount > 99 ? "99+" : unreadCount;
-
-            notificationCount.hidden = unreadCount === 0;
-        }
-    }
-
-    // Display notifications
-   
-function renderNotifications() {
-    if (!notificationList) return;
-
-    const notifications = getNotifications();
-
-    notificationList.replaceChildren();
-
-    if (notifications.length === 0) {
-        const emptyMessage = document.createElement("p");
-        emptyMessage.className = "no-notifications";
-        emptyMessage.textContent = "No notifications yet.";
-
-        notificationList.appendChild(emptyMessage);
-    } else {
-        notifications.forEach(function (notification) {
-            const item = document.createElement("div");
-            item.className = "notification-item";
-
-            if (!notification.read) {
-                item.classList.add("unread");
-            }
-
-            item.tabIndex = 0;
-            item.setAttribute("role", "button");
-
-            item.setAttribute(
-                "aria-label",
-                (notification.message || "Notification") +
-                (notification.read ? ", read" : ", unread")
-            );
-
-            const message = document.createElement("p");
-            message.textContent =
-                notification.message || "New notification";
-
-            const time = document.createElement("small");
-            time.textContent = notification.createdAt || "";
-
-            item.append(message, time);
-
-            function openNotification() {
-                const currentNotifications = getNotifications();
-
-                // Identify this notification by its unique ID.
-                const currentNotification = currentNotifications.find(
-                    function (entry) {
-                        return entry.id === notification.id;
-                    }
-                );
-
-                if (currentNotification && !currentNotification.read) {
-                    currentNotification.read = true;
-                    saveNotifications(currentNotifications);
-                }
-
-                // Request notifications navigate to the Requests page.
-                const text = notification.message || "";
-                const isRequestNotification =
-                    /wants to learn|request.*(accepted|rejected)|has been (accepted|rejected)|skill exchange request/i.test(text);
-
-                if (isRequestNotification) {
-                    window.location.href = "requests.html";
-                    return;
-                }
-
-                renderNotifications();
-            }
-
-            item.addEventListener("click", openNotification);
-
-            item.addEventListener("keydown", function (event) {
-                if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    openNotification();
-                }
-            });
-
-            notificationList.appendChild(item);
-        });
-    }
-
-    updateNotificationCount(getNotifications());
-}
-
-
-    // Open and close dropdown
-    if (notificationBell && notificationPanel) {
-        notificationBell.addEventListener("click", function () {
-            const isOpening = notificationPanel.hidden;
-
-            notificationPanel.hidden = !isOpening;
-
-            notificationBell.setAttribute(
-                "aria-expanded",
-                String(isOpening)
-            );
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener("click", function (event) {
-            if (
-                !event.target.closest(".notification-wrapper") &&
-                !notificationPanel.hidden
-            ) {
-                notificationPanel.hidden = true;
-                notificationBell.setAttribute("aria-expanded", "false");
-            }
-        });
-
-        // Close dropdown with Escape key
-        document.addEventListener("keydown", function (event) {
-            if (event.key === "Escape") {
-                notificationPanel.hidden = true;
-                notificationBell.setAttribute("aria-expanded", "false");
-            }
-        });
-    }
-
-    // Mark all notifications as read
-    if (markAllReadButton) {
-        markAllReadButton.addEventListener("click", function () {
-            const notifications = getNotifications();
-
-            notifications.forEach(function (notification) {
-                notification.read = true;
-            });
-
-            if (saveNotifications(notifications)) {
-                renderNotifications();
-            }
-        });
-    }
-
-    // Clear all notifications
-    if (clearNotificationsButton) {
-        clearNotificationsButton.addEventListener("click", function () {
-            const shouldClear = confirm(
-                "Are you sure you want to clear all notifications?"
-            );
-
-            if (shouldClear && saveNotifications([])) {
-                renderNotifications();
-            }
-        });
-    }
-
-    // Render notifications when the page loads
-    renderNotifications();
 
 
 });

@@ -1,11 +1,17 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    // 1. Get the selected skill from the URL
+    // ==========================================
+    // 1. GET SELECTED SKILL FROM URL
+    // ==========================================
+
     const urlParams = new URLSearchParams(window.location.search);
     const selectedSkill = urlParams.get("skill");
 
-    // 2. Store details for all six skills
+    // ==========================================
+    // 2. SKILL DETAILS
+    // ==========================================
+
     const skills = {
         java: {
             category: "PROGRAMMING",
@@ -116,40 +122,65 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // 3. Get the selected skill
     const skill = skills[selectedSkill] || skills.java;
 
-    // 4. Display skill details
-    document.getElementById("skillCategory").textContent = skill.category;
-    document.getElementById("skillTitle").textContent = skill.title;
-    document.getElementById("skillDescription").textContent = skill.description;
-    document.getElementById("skillLevel").textContent = skill.level;
-    document.getElementById("skillDuration").textContent = skill.duration;
+    // ==========================================
+    // 3. DISPLAY SKILL DETAILS
+    // ==========================================
 
-    document.querySelector(".visual-symbol").textContent = skill.symbol;
+    function setText(id, value) {
+        const element = document.getElementById(id);
 
-    // 5. Display learning topics
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    setText("skillCategory", skill.category);
+    setText("skillTitle", skill.title);
+    setText("skillDescription", skill.description);
+    setText("skillLevel", skill.level);
+    setText("skillDuration", skill.duration);
+
+    const visualSymbol = document.querySelector(".visual-symbol");
+
+    if (visualSymbol) {
+        visualSymbol.textContent = skill.symbol;
+    }
+
+    // ==========================================
+    // 4. DISPLAY LEARNING TOPICS
+    // ==========================================
+
     const learningList = document.getElementById("learningList");
-    learningList.replaceChildren();
 
-    skill.learning.forEach(function (topic) {
-        const listItem = document.createElement("li");
-        listItem.textContent = topic;
-        learningList.appendChild(listItem);
-    });
+    if (learningList) {
+        learningList.replaceChildren();
 
-    // 6. Display skill partner
-    document.getElementById("teacherName").textContent = skill.teacher;
-    document.getElementById("teacherRole").textContent = skill.role;
-    document.getElementById("teacherDescription").textContent =
-        skill.teacherDescription;
+        skill.learning.forEach(function (topic) {
+            const listItem = document.createElement("li");
+            listItem.textContent = topic;
+            learningList.appendChild(listItem);
+        });
+    }
 
-    document.getElementById("teacherAvatar").textContent =
-        skill.teacher.charAt(0).toUpperCase();
+    // ==========================================
+    // 5. DISPLAY TEACHER DETAILS
+    // ==========================================
 
-    // 7. Request and notification storage keys
-   
-    // 7. Request and notification storage keys
+    setText("teacherName", skill.teacher);
+    setText("teacherRole", skill.role);
+    setText("teacherDescription", skill.teacherDescription);
+
+    setText(
+        "teacherAvatar",
+        skill.teacher.charAt(0).toUpperCase()
+    );
+
+    // ==========================================
+    // 6. STORAGE KEYS
+    // ==========================================
+
     const requestButton = document.getElementById("requestButton");
     const requestMessage = document.getElementById("requestMessage");
 
@@ -159,131 +190,225 @@ document.addEventListener("DOMContentLoaded", function () {
     const detailsKey = "skillswapDemoProfileDetailsByUser";
     const sessionKey = "skillswapDemoSession";
 
+    // ==========================================
+    // 7. READ ARRAY FROM LOCAL STORAGE
+    // ==========================================
+
     function readArray(key) {
         try {
-            const data = JSON.parse(localStorage.getItem(key) || "[]");
+            const data = JSON.parse(
+                localStorage.getItem(key) || "[]"
+            );
+
             return Array.isArray(data) ? data : [];
+
         } catch (error) {
+            console.error("Could not read array:", key, error);
             return [];
         }
     }
 
+    // ==========================================
+    // 8. READ OBJECT FROM LOCAL STORAGE
+    // ==========================================
+
     function readObject(key) {
         try {
-            const data = JSON.parse(localStorage.getItem(key) || "{}");
-            return data && typeof data === "object" && !Array.isArray(data)
-                ? data
-                : {};
+            const data = JSON.parse(
+                localStorage.getItem(key) || "{}"
+            );
+
+            return data &&
+                typeof data === "object" &&
+                !Array.isArray(data)
+                    ? data
+                    : {};
+
         } catch (error) {
+            console.error("Could not read object:", key, error);
             return {};
         }
     }
 
+    // ==========================================
+    // 9. DISPLAY MESSAGE
+    // ==========================================
+
     function showMessage(message, color) {
+        if (!requestMessage) {
+            return;
+        }
+
         requestMessage.textContent = message;
         requestMessage.style.color = color;
     }
 
+    // ==========================================
+    // 10. HANDLE REQUEST BUTTON
+    // ==========================================
+
     if (requestButton && requestMessage) {
+
         requestButton.addEventListener("click", function () {
+
             const senderId = sessionStorage.getItem(sessionKey);
 
+            // Check login.
             if (!senderId) {
-                showMessage("Please log in before sending a request.", "#ffb3bb");
-                return;
-            }
-
-            const users = readArray(usersKey);
-            const detailsByUser = readObject(detailsKey);
-
-            const sender = users.find(function (user) {
-                return String(user.id) === String(senderId);
-            });
-
-            if (!sender) {
-                showMessage("Your account could not be found. Please log in again.", "#ffb3bb");
-                return;
-            }
-
-            // Find the teacher from the selected member profile, if available.
-            const pageParams = new URLSearchParams(window.location.search);
-            const receiverId = pageParams.get("userId");
-
-            let receiver = receiverId
-                ? users.find(function (user) {
-                    return String(user.id) === String(receiverId);
-                })
-                : null;
-
-            // Fallback for the original six demo skill pages.
-            if (!receiver && !receiverId) {
-                receiver = users.find(function (user) {
-                    const name = detailsByUser[user.id]?.name || user.name || "";
-                    return name.trim().toLowerCase() ===
-                        skill.teacher.trim().toLowerCase();
-                });
-            }
-
-            if (!receiver) {
                 showMessage(
-                    "This skill does not have a linked registered member yet.",
-                    "#ffcc80"
+                    "Please log in before sending a request.",
+                    "#ffb3bb"
                 );
                 return;
             }
 
-            if (String(receiver.id) === String(senderId)) {
-                showMessage("You cannot send a request to yourself.", "#ffcc80");
+            // Prevent repeated clicks while saving.
+            if (requestButton.disabled) {
                 return;
             }
 
-            const receiverDetails = detailsByUser[receiver.id] || {};
-            const receiverName =
-                receiverDetails.name || receiver.name || skill.teacher;
-
-            const senderDetails = detailsByUser[sender.id] || {};
-            const senderName =
-                senderDetails.name || sender.name || "SkillSwap Member";
-
-            const requests = readArray(requestStorageKey);
-
-            const alreadyRequested = requests.some(function (request) {
-                return String(request.senderId) === String(senderId) &&
-                    String(request.receiverId) === String(receiver.id) &&
-                    request.wantedSkill === skill.title &&
-                    (request.status || "Pending") === "Pending";
-            });
-
-            if (alreadyRequested) {
-                showMessage("You already have a pending request for this member and skill.", "#ffcc80");
-                return;
-            }
-
-            const request = {
-                id: Date.now().toString() + Math.random().toString(36).slice(2),
-                senderId: sender.id,
-                receiverId: receiver.id,
-                userName: senderName,
-                receiverName: receiverName,
-                wantedSkill: skill.title,
-                offeredSkill: Array.isArray(senderDetails.teachSkills)
-                    ? senderDetails.teachSkills.join(", ") || "To be discussed"
-                    : "To be discussed",
-                status: "Pending",
-                createdAt: new Date().toISOString()
-            };
-
-            const notifications = readArray(notificationStorageKey);
-
-            notifications.unshift({
-                id: Date.now().toString() + Math.random().toString(36).slice(2),
-                userId: receiver.id,
-                message: senderName + " wants to learn " + skill.title + " from you.",
-                read: false,
-                createdAt: new Date().toISOString()
-            });
+            requestButton.disabled = true;
+            showMessage("Sending your request...", "#65a7ff");
 
             try {
+                const users = readArray(usersKey);
+                const detailsByUser = readObject(detailsKey);
+
+                // Find sender.
+                const sender = users.find(function (user) {
+                    return String(user.id) === String(senderId);
+                });
+
+                if (!sender) {
+                    showMessage(
+                        "Your account could not be found. Please log in again.",
+                        "#ffb3bb"
+                    );
+                    return;
+                }
+
+                // Find receiver from the URL, if provided.
+                const pageParams = new URLSearchParams(
+                    window.location.search
+                );
+
+                const receiverId = pageParams.get("userId");
+
+                let receiver = receiverId
+                    ? users.find(function (user) {
+                        return String(user.id) === String(receiverId);
+                    })
+                    : null;
+
+                // For the original demo skills, match the teacher name.
+                if (!receiver && !receiverId) {
+                    receiver = users.find(function (user) {
+                        const name =
+                            detailsByUser[user.id]?.name ||
+                            user.name ||
+                            "";
+
+                        return name.trim().toLowerCase() ===
+                            skill.teacher.trim().toLowerCase();
+                    });
+                }
+
+                if (!receiver) {
+                    showMessage(
+                        "This skill does not have a linked registered member yet.",
+                        "#ffcc80"
+                    );
+                    return;
+                }
+
+                // Prevent sending a request to yourself.
+                if (String(receiver.id) === String(senderId)) {
+                    showMessage(
+                        "You cannot send a request to yourself.",
+                        "#ffcc80"
+                    );
+                    return;
+                }
+
+                const senderDetails = detailsByUser[sender.id] || {};
+                const receiverDetails = detailsByUser[receiver.id] || {};
+
+                const senderName =
+                    senderDetails.name ||
+                    sender.name ||
+                    "SkillSwap Member";
+
+                const receiverName =
+                    receiverDetails.name ||
+                    receiver.name ||
+                    skill.teacher;
+
+                const requests = readArray(requestStorageKey);
+
+                // Prevent duplicate pending requests to the same member
+                // for the same skill from the same sender.
+                const alreadyRequested = requests.some(function (request) {
+                    return (
+                        String(request.senderId) === String(senderId) &&
+                        String(request.receiverId) === String(receiver.id) &&
+                        request.wantedSkill === skill.title &&
+                        (request.status || "Pending") === "Pending"
+                    );
+                });
+
+                if (alreadyRequested) {
+                    showMessage(
+                        "You already have a pending request for this member and skill.",
+                        "#ffcc80"
+                    );
+                    return;
+                }
+
+                // Build request object.
+                const request = {
+                    id:
+                        Date.now().toString() +
+                        Math.random().toString(36).slice(2),
+
+                    senderId: sender.id,
+                    receiverId: receiver.id,
+                    userName: senderName,
+                    receiverName: receiverName,
+                    wantedSkill: skill.title,
+
+                    offeredSkill: Array.isArray(senderDetails.teachSkills)
+                        ? senderDetails.teachSkills.join(", ") ||
+                          "To be discussed"
+                        : "To be discussed",
+
+                    status: "Pending",
+                    createdAt: new Date().toISOString()
+                };
+
+                const notifications = readArray(
+                    notificationStorageKey
+                );
+
+                const notification = {
+                    id:
+                        Date.now().toString() +
+                        Math.random().toString(36).slice(2),
+
+                    userId: receiver.id,
+                    requestId: request.id,
+                    type: "new-request",
+
+                    message:
+                        senderName +
+                        " wants to learn " +
+                        skill.title +
+                        " from you.",
+
+                    read: false,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Save request and notification.
                 localStorage.setItem(
                     requestStorageKey,
                     JSON.stringify([...requests, request])
@@ -291,96 +416,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 localStorage.setItem(
                     notificationStorageKey,
-                    JSON.stringify(notifications)
+                    JSON.stringify([...notifications, notification])
                 );
 
-                showMessage("Request sent to " + receiverName + " successfully!", "#72e6a5");
+                showMessage(
+                    "Request sent to " + receiverName + " successfully!",
+                    "#72e6a5"
+                );
+
                 requestButton.textContent = "Request Sent";
-                requestButton.disabled = true;
-            } catch (error) {
-                console.error("SkillSwap request error:", error);
-                showMessage("Could not save the request. Please try again.", "#ffb3bb");
-            }
-        });
-    }
-
-
-    // 8. Send request when the button is clicked
-    if (requestButton && requestMessage) {
-        requestButton.addEventListener("click", function () {
-
-            requestButton.disabled = true;
-            requestMessage.textContent = "Sending your request...";
-            requestMessage.style.color = "#65a7ff";
-
-            try {
-                const requests = readStorage(requestStorageKey);
-                const notifications = readStorage(notificationStorageKey);
-
-                // Prevent accidental duplicate pending requests
-                const alreadyRequested = requests.some(function (request) {
-                    return request.wantedSkill === skill.title &&
-                        request.status === "Pending";
-                });
-
-                if (alreadyRequested) {
-                    requestMessage.textContent =
-                        "You already have a pending request for " +
-                        skill.title + ".";
-                    requestMessage.style.color = "#ffcc80";
-                    return;
-                }
-
-                // Create the request
-                const request = {
-                    id: Date.now().toString() +
-                        Math.random().toString(36).slice(2),
-                    userName: skill.teacher,
-                    wantedSkill: skill.title,
-                    offeredSkill: "To be discussed",
-                    status: "Pending",
-                    createdAt: new Date().toISOString()
-                };
-
-                // Create the notification
-                const notification = {
-                    id: Date.now().toString() +
-                        Math.random().toString(36).slice(2),
-                    message: "Your request to learn " + skill.title +
-                        " has been sent. Status: Pending.",
-                    read: false,
-                    createdAt: new Date().toISOString()
-                };
-
-                // Save both
-                requests.push(request);
-                notifications.unshift(notification);
-
-                localStorage.setItem(
-                    requestStorageKey,
-                    JSON.stringify(requests)
-                );
-
-                localStorage.setItem(
-                    notificationStorageKey,
-                    JSON.stringify(notifications)
-                );
-
-                requestMessage.textContent =
-                    "Request sent successfully! Your request for " +
-                    skill.title + " is pending.";
-                requestMessage.style.color = "#72e6a5";
 
             } catch (error) {
                 console.error("SkillSwap request error:", error);
 
-                requestMessage.textContent =
-                    "Could not send your request. Please check the browser console.";
-                requestMessage.style.color = "#ffb3bb";
+                showMessage(
+                    "Could not send your request. Please check the browser console.",
+                    "#ffb3bb"
+                );
 
             } finally {
                 requestButton.disabled = false;
             }
         });
     }
+
 });

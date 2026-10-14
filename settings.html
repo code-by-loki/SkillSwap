@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Settings | SkillSwap</title>
+
+    <link rel="stylesheet" href="css/settings.css">
+    <script src="js/settings.js" defer></script>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="index.html" class="logo">Skill<span>Swap</span></a>
+
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="profile.html">Profile</a>
+            <a href="sessions.html">Sessions</a>
+        </nav>
+
+        <a href="dashboard.html" class="back-btn">Back to Dashboard</a>
+    </header>
+
+    <main class="settings-container">
+
+        <section class="page-heading">
+            <span class="eyebrow">YOUR ACCOUNT</span>
+            <h1>Settings<span>.</span></h1>
+            <p>Personalize your SkillSwap experience.</p>
+        </section>
+
+        <div id="pageMessage" class="page-message" role="status" aria-live="polite"></div>
+
+        <!-- Account Settings -->
+        <section class="settings-card">
+            <div class="card-heading">
+                <div class="heading-icon">👤</div>
+                <div>
+                    <h2>Account Settings</h2>
+                    <p>Manage your personal information.</p>
+                </div>
+            </div>
+
+            <form id="accountForm">
+                <div class="form-group">
+                    <label for="displayName">Full Name</label>
+                    <input type="text" id="displayName"
+                           placeholder="Enter your name" required maxlength="80">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email"
+                           placeholder="Enter your email" required>
+                    <small>Email changes are saved to your local demo profile.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">About Me</label>
+                    <textarea id="bio" rows="4" maxlength="500"
+                              placeholder="Tell the community about yourself..."></textarea>
+                </div>
+
+                <button type="submit" class="primary-btn">Save Account</button>
+            </form>
+        </section>
+
+        <!-- Notification Settings -->
+        <section class="settings-card">
+            <div class="card-heading">
+                <div class="heading-icon">🔔</div>
+                <div>
+                    <h2>Notifications</h2>
+                    <p>Choose your notification preferences.</p>
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div>
+                    <h3>Request Updates</h3>
+                    <p>Receive preferences for skill request updates.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="requestNotifications">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div>
+                    <h3>Session Reminders</h3>
+                    <p>Enable your session reminder preference.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="sessionNotifications">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </section>
+
+        <!-- Appearance -->
+        <section class="settings-card">
+            <div class="card-heading">
+                <div class="heading-icon">🎨</div>
+                <div>
+                    <h2>Appearance</h2>
+                    <p>Choose how SkillSwap looks.</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="themeSelect">Theme</label>
+                <select id="themeSelect">
+                    <option value="dark">Dark Theme</option>
+                    <option value="light">Light Theme</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- Privacy -->
+        <section class="settings-card">
+            <div class="card-heading">
+                <div class="heading-icon">🛡️</div>
+                <div>
+                    <h2>Privacy & Security</h2>
+                    <p>Manage your account session.</p>
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div>
+                    <h3>Log Out</h3>
+                    <p>Sign out of your current SkillSwap session.</p>
+                </div>
+                <button type="button" id="logoutButton" class="danger-btn">
+                    Log Out
+                </button>
+            </div>
+
+            <p class="security-note">
+                This demo stores account data in your browser.
+                It is not a secure production authentication system.
+            </p>
+        </section>
+
+        <footer class="settings-footer">
+            Made for learners, built for sharing. 💙
+        </footer>
+
+    </main>
+
+</body>
+</html>

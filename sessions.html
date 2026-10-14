@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Sessions | SkillSwap</title>
+
+    <!-- Sessions page CSS -->
+    <link rel="stylesheet" href="css/sessions.css">
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+        <div class="logo">
+            <a href="index.html">Skill<span>Swap</span></a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="explore.html">Explore Skills</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="requests.html">Requests</a>
+            <a href="sessions.html" class="active">My Sessions</a>
+            <a href="profile.html">My Profile</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="sessions-container">
+
+        <!-- Page Heading -->
+        <section class="page-heading">
+            <p class="eyebrow">YOUR LEARNING JOURNEY</p>
+
+            <h1>My <span>Sessions</span></h1>
+
+            <p class="page-description">
+                Manage your skill-exchange sessions and keep track
+                of your learning progress.
+            </p>
+        </section>
+
+        <!-- Session Statistics -->
+        <section class="session-stats">
+
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div>
+                    <p>Total Sessions</p>
+                    <h2 id="totalSessions">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div>
+                    <p>Upcoming</p>
+                    <h2 id="upcomingSessions">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div>
+                    <p>Completed</p>
+                    <h2 id="completedSessions">0</h2>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Session Filters -->
+        <section class="sessions-section">
+
+            <div class="sessions-toolbar">
+                <div>
+                    <h2>Your Sessions</h2>
+                    <p>View and manage your learning activities.</p>
+                </div>
+
+                <select id="sessionFilter" aria-label="Filter sessions">
+                    <option value="all">All Sessions</option>
+                    <option value="upcoming">Upcoming</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <!-- Session Cards Will Appear Here -->
+            <div id="sessionsList" class="sessions-grid">
+
+                <!-- Initial Empty State -->
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-icon">📚</div>
+
+                    <h3>No sessions yet</h3>
+
+                    <p>
+                        Your skill-exchange sessions will appear here
+                        when you create or schedule them.
+                    </p>
+
+                    <a href="explore.html" class="primary-btn">
+                        Explore Skills
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Message Area -->
+            <p id="pageMessage" class="page-message" role="status"></p>
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript -->
+    <script src="js/sessions.js"></script>
+
+</body>
+</html>
