@@ -68,6 +68,12 @@
                     Search
                 </button>
 
+                
+               <button type="button" id="clearSearchButton" class="clear-search-btn">
+                 Clear Search
+                </button>
+
+
             </div>
 
         </section>
@@ -102,8 +108,33 @@
                     data-category="Music">🎸 Music</button>
 
             </div>
+         
 
+            <!-- Search Results and Sorting -->
 
+             
+            <div class="skill-toolbar">
+            
+                <p id="resultsCount" aria-live="polite">
+
+                   Showing all skills
+                
+                </p>
+                    
+            <label for="sortSkills">Sort by:</label>
+               
+            <select id="sortSkills">
+            
+                <option value="default">Default</option>
+            
+                <option value="name-asc">Name: A to Z</option>
+            
+                <option value="name-desc">Name: Z to A</option>
+           
+            </select>
+
+            </div>
+                       
             <!-- Skill Cards -->
             <div class="explore-grid" id="skillsGrid">
 

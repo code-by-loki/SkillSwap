@@ -1,36 +1,54 @@
+
 document.addEventListener("DOMContentLoaded", function () {
+    const USERS_KEY = "skillswapDemoUsers";
+    const SESSION_KEY = "skillswapDemoSession";
+    const DETAILS_KEY = "skillswapDemoProfileDetailsByUser";
 
-   
-    // Check login session and registered profile
-    const loggedInUser = sessionStorage.getItem("skillswapDemoSession");
-    const savedProfile = localStorage.getItem("skillswapDemoProfile");
+    // 1. Check the logged-in user
+    const loggedInUserId = sessionStorage.getItem(SESSION_KEY);
+    const users = JSON.parse(localStorage.getItem(USERS_KEY)) || [];
 
-    if (!loggedInUser || !savedProfile) {
+    if (!loggedInUserId) {
         alert("Please login first to access your profile.");
         window.location.replace("login.html");
         return;
     }
 
-    const profile = JSON.parse(savedProfile);
+    const currentUser = users.find(function (user) {
+        return user.id === loggedInUserId;
+    });
 
-    if (profile.email !== loggedInUser) {
-        sessionStorage.removeItem("skillswapDemoSession");
+    if (!currentUser) {
+        sessionStorage.removeItem(SESSION_KEY);
         window.location.replace("login.html");
         return;
     }
 
+    // 2. Get this user's saved profile only
+    let allDetails = {};
+
+    try {
+        allDetails =
+            JSON.parse(localStorage.getItem(DETAILS_KEY)) || {};
+    } catch (error) {
+        allDetails = {};
+    }
+
+    let details = allDetails[loggedInUserId] || {
+        name: currentUser.name,
+        email: currentUser.email,
+        bio: "",
+        teachSkills: ["Java", "HTML"],
+        learnSkills: ["UI/UX Design", "Photography"]
+    };
+
+    // 3. Get HTML elements
     const editButton = document.getElementById("editButton");
     const cancelButton = document.getElementById("cancelButton");
     const editSection = document.getElementById("editProfileSection");
     const profileForm = document.getElementById("profileForm");
     const message = document.getElementById("profileMessage");
     const logoutButton = document.getElementById("logoutButton");
-    if (logoutButton) {
-    logoutButton.addEventListener("click", function () {
-        sessionStorage.removeItem("skillswapDemoSession");
-        window.location.href = "login.html";
-    });
-    }
 
     const nameInput = document.getElementById("nameInput");
     const emailInput = document.getElementById("emailInput");
@@ -38,44 +56,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const teachInput = document.getElementById("teachInput");
     const learnInput = document.getElementById("learnInput");
 
-    const PROFILE_KEY = "skillswapDemoProfile";
-    const DETAILS_KEY = "skillswapDemoProfileDetails";
-
-    // Load saved profile details
+    // 4. Display profile
     function loadProfile() {
-        try {
-            const savedDetails = localStorage.getItem(DETAILS_KEY);
-            const savedAccount = localStorage.getItem(PROFILE_KEY);
+        document.getElementById("displayName").textContent =
+            details.name;
 
-            const details = savedDetails ? JSON.parse(savedDetails) : {};
-            const account = savedAccount ? JSON.parse(savedAccount) : {};
+        document.getElementById("displayEmail").textContent =
+            details.email;
 
-            const name = details.name || account.name || "Loki Kumar";
-            const email = details.email || account.email || "loki@example.com";
-            const bio = details.bio || "Learning new skills and sharing knowledge with others.";
+        document.getElementById("displayBio").textContent =
+            details.bio || "No bio added yet.";
 
-            document.getElementById("displayName").textContent = name;
-            document.getElementById("displayEmail").textContent = email;
-            document.getElementById("displayBio").textContent = bio;
-            document.getElementById("avatar").textContent =
-                name.charAt(0).toUpperCase();
+        document.getElementById("avatar").textContent =
+            details.name.charAt(0).toUpperCase();
 
-            renderSkills(
-                "teachSkills",
-                details.teachSkills || ["Java", "HTML"]
-            );
-
-            renderSkills(
-                "learnSkills",
-                details.learnSkills || ["UI/UX Design", "Photography"]
-            );
-
-        } catch (error) {
-            console.error("Unable to load profile details.", error);
-        }
+        renderSkills("teachSkills", details.teachSkills);
+        renderSkills("learnSkills", details.learnSkills);
     }
 
-    // Display skill tags
+    // 5. Display skill tags safely
     function renderSkills(elementId, skills) {
         const container = document.getElementById(elementId);
 
@@ -90,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Convert comma-separated text into an array
+    // 6. Convert comma-separated skills into an array
     function getSkills(value) {
         return value
             .split(",")
@@ -103,104 +102,116 @@ document.addEventListener("DOMContentLoaded", function () {
             .slice(0, 20);
     }
 
-    // Open the edit form with current details
+    // 7. Open editor
     function openEditor() {
-        nameInput.value =
-            document.getElementById("displayName").textContent;
+        nameInput.value = details.name;
+        emailInput.value = details.email;
+        bioInput.value = details.bio || "";
 
-        emailInput.value =
-            document.getElementById("displayEmail").textContent;
-
-        bioInput.value =
-            document.getElementById("displayBio").textContent;
-
-        teachInput.value =
-            Array.from(document.querySelectorAll("#teachSkills span"))
-                .map(function (tag) {
-                    return tag.textContent;
-                }).join(", ");
-
-        learnInput.value =
-            Array.from(document.querySelectorAll("#learnSkills span"))
-                .map(function (tag) {
-                    return tag.textContent;
-                }).join(", ");
+        teachInput.value = details.teachSkills.join(", ");
+        learnInput.value = details.learnSkills.join(", ");
 
         message.textContent = "";
         editSection.hidden = false;
+
         editSection.scrollIntoView({ behavior: "smooth" });
     }
 
-    editButton.addEventListener("click", openEditor);
+    if (editButton) {
+        editButton.addEventListener("click", openEditor);
+    }
 
-    // Cancel editing
-    cancelButton.addEventListener("click", function () {
-        editSection.hidden = true;
-        message.textContent = "";
-    });
+    // 8. Cancel editing
+    if (cancelButton) {
+        cancelButton.addEventListener("click", function () {
+            editSection.hidden = true;
+            message.textContent = "";
+        });
+    }
 
-    // Save profile changes
-    profileForm.addEventListener("submit", function (event) {
-        event.preventDefault();
+    // 9. Save profile changes
+    if (profileForm) {
+        profileForm.addEventListener("submit", function (event) {
+            event.preventDefault();
 
-        const name = nameInput.value.trim();
-        const email = emailInput.value.trim();
-        const bio = bioInput.value.trim();
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim().toLowerCase();
+            const bio = bioInput.value.trim();
 
-        if (!name || !email) {
-            message.textContent = "Name and email are required.";
-            message.style.color = "#ff7777";
-            return;
-        }
-
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            message.textContent = "Please enter a valid email address.";
-            message.style.color = "#ff7777";
-            return;
-        }
-
-        const profileDetails = {
-            name: name,
-            email: email,
-            bio: bio || "No bio added yet.",
-            teachSkills: getSkills(teachInput.value),
-            learnSkills: getSkills(learnInput.value)
-        };
-
-        try {
-            localStorage.setItem(
-                DETAILS_KEY,
-                JSON.stringify(profileDetails)
-            );
-
-            // Keep the demo profile name/email in sync with registration data.
-            const savedAccount = localStorage.getItem(PROFILE_KEY);
-
-            if (savedAccount) {
-                const account = JSON.parse(savedAccount);
-                account.name = name;
-                account.email = email;
-
-                localStorage.setItem(
-                    PROFILE_KEY,
-                    JSON.stringify(account)
-                );
+            if (!name || !email) {
+                message.textContent = "Name and email are required.";
+                message.style.color = "#ff7777";
+                return;
             }
 
-            loadProfile();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                message.textContent = "Please enter a valid email address.";
+                message.style.color = "#ff7777";
+                return;
+            }
 
-            message.textContent = "Profile updated successfully!";
-            message.style.color = "#72e6a5";
-            editSection.hidden = true;
+            // Prevent duplicate email addresses
+            const emailExists = users.some(function (user) {
+                return user.id !== loggedInUserId &&
+                    user.email.toLowerCase() === email;
+            });
 
-        } catch (error) {
-            message.textContent =
-                "Unable to save changes. Browser storage may be unavailable.";
-            message.style.color = "#ff7777";
-        }
-    });
+            if (emailExists) {
+                message.textContent =
+                    "This email is already used by another account.";
+                message.style.color = "#ff7777";
+                return;
+            }
 
-    // Display profile when the page opens
+            const updatedDetails = {
+                name: name,
+                email: email,
+                bio: bio || "No bio added yet.",
+                teachSkills: getSkills(teachInput.value),
+                learnSkills: getSkills(learnInput.value)
+            };
+
+            try {
+                // Save under this user's ID
+                allDetails[loggedInUserId] = updatedDetails;
+
+                localStorage.setItem(
+                    DETAILS_KEY,
+                    JSON.stringify(allDetails)
+                );
+
+                // Update the correct account
+                currentUser.name = name;
+                currentUser.email = email;
+
+                localStorage.setItem(
+                    USERS_KEY,
+                    JSON.stringify(users)
+                );
+
+                details = updatedDetails;
+                loadProfile();
+
+                message.textContent = "Profile updated successfully!";
+                message.style.color = "#72e6a5";
+                editSection.hidden = true;
+
+            } catch (error) {
+                message.textContent =
+                    "Unable to save changes. Browser storage may be unavailable.";
+                message.style.color = "#ff7777";
+            }
+        });
+    }
+
+    // 10. Logout
+    if (logoutButton) {
+        logoutButton.addEventListener("click", function () {
+            sessionStorage.removeItem(SESSION_KEY);
+            window.location.href = "login.html";
+        });
+    }
+
+    // 11. Display profile when page opens
     loadProfile();
-
 });

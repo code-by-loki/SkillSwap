@@ -146,4 +146,195 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+
+    /* =====================================
+       7. NOTIFICATION SYSTEM
+    ===================================== */
+
+    const notificationBell = document.getElementById("notificationBell");
+    const notificationPanel = document.getElementById("notificationPanel");
+    const notificationCount = document.getElementById("notificationCount");
+    const notificationList = document.getElementById("notificationList");
+    const markAllReadButton = document.getElementById("markAllRead");
+    const clearNotificationsButton = document.getElementById("clearNotifications");
+
+    const notificationStorageKey = "skillswapNotifications";
+
+    // Read notifications from localStorage
+    function getNotifications() {
+        try {
+            const data = JSON.parse(
+                localStorage.getItem(notificationStorageKey) || "[]"
+            );
+
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            return [];
+        }
+    }
+
+    // Save notifications to localStorage
+    function saveNotifications(notifications) {
+        try {
+            localStorage.setItem(
+                notificationStorageKey,
+                JSON.stringify(notifications)
+            );
+            return true;
+        } catch (error) {
+            alert("Unable to save notifications in this browser.");
+            return false;
+        }
+    }
+
+    // Update unread count
+    function updateNotificationCount(notifications) {
+        const unreadCount = notifications.filter(function (notification) {
+            return !notification.read;
+        }).length;
+
+        if (notificationCount) {
+            notificationCount.textContent =
+                unreadCount > 99 ? "99+" : unreadCount;
+
+            notificationCount.hidden = unreadCount === 0;
+        }
+    }
+
+    // Display notifications
+    function renderNotifications() {
+        if (!notificationList) return;
+
+        const notifications = getNotifications();
+
+        notificationList.replaceChildren();
+
+        if (notifications.length === 0) {
+            const emptyMessage = document.createElement("p");
+            emptyMessage.className = "no-notifications";
+            emptyMessage.textContent = "No notifications yet.";
+
+            notificationList.appendChild(emptyMessage);
+        } else {
+            notifications.forEach(function (notification, index) {
+                const item = document.createElement("div");
+                item.className = "notification-item";
+
+                if (!notification.read) {
+                    item.classList.add("unread");
+                }
+
+                item.tabIndex = 0;
+                item.setAttribute("role", "button");
+                item.setAttribute(
+                    "aria-label",
+                    (notification.message || "Notification") +
+                    (notification.read ? ", read" : ", unread")
+                );
+
+                const message = document.createElement("p");
+                message.textContent = notification.message || "New notification";
+
+                const time = document.createElement("small");
+                time.textContent = notification.createdAt || "";
+
+                item.appendChild(message);
+                item.appendChild(time);
+
+                function markAsRead() {
+                    const currentNotifications = getNotifications();
+
+                    if (
+                        currentNotifications[index] &&
+                        !currentNotifications[index].read
+                    ) {
+                        currentNotifications[index].read = true;
+
+                        if (saveNotifications(currentNotifications)) {
+                            renderNotifications();
+                        }
+                    }
+                }
+
+                item.addEventListener("click", markAsRead);
+
+                item.addEventListener("keydown", function (event) {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        markAsRead();
+                    }
+                });
+
+                notificationList.appendChild(item);
+            });
+        }
+
+        updateNotificationCount(notifications);
+    }
+
+    // Open and close dropdown
+    if (notificationBell && notificationPanel) {
+        notificationBell.addEventListener("click", function () {
+            const isOpening = notificationPanel.hidden;
+
+            notificationPanel.hidden = !isOpening;
+
+            notificationBell.setAttribute(
+                "aria-expanded",
+                String(isOpening)
+            );
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function (event) {
+            if (
+                !event.target.closest(".notification-wrapper") &&
+                !notificationPanel.hidden
+            ) {
+                notificationPanel.hidden = true;
+                notificationBell.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        // Close dropdown with Escape key
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                notificationPanel.hidden = true;
+                notificationBell.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
+    // Mark all notifications as read
+    if (markAllReadButton) {
+        markAllReadButton.addEventListener("click", function () {
+            const notifications = getNotifications();
+
+            notifications.forEach(function (notification) {
+                notification.read = true;
+            });
+
+            if (saveNotifications(notifications)) {
+                renderNotifications();
+            }
+        });
+    }
+
+    // Clear all notifications
+    if (clearNotificationsButton) {
+        clearNotificationsButton.addEventListener("click", function () {
+            const shouldClear = confirm(
+                "Are you sure you want to clear all notifications?"
+            );
+
+            if (shouldClear && saveNotifications([])) {
+                renderNotifications();
+            }
+        });
+    }
+
+    // Render notifications when the page loads
+    renderNotifications();
+
+
 });

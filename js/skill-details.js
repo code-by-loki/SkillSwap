@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
 
     // 1. Get the selected skill from the URL
@@ -6,7 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 2. Store details for all six skills
     const skills = {
-
         java: {
             category: "PROGRAMMING",
             title: "Java Programming",
@@ -116,20 +116,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // 3. Find the selected skill
+    // 3. Get the selected skill
     const skill = skills[selectedSkill] || skills.java;
 
-    // 4. Display the selected skill details
+    // 4. Display skill details
     document.getElementById("skillCategory").textContent = skill.category;
     document.getElementById("skillTitle").textContent = skill.title;
     document.getElementById("skillDescription").textContent = skill.description;
     document.getElementById("skillLevel").textContent = skill.level;
     document.getElementById("skillDuration").textContent = skill.duration;
 
-    // 5. Update the visual symbol
     document.querySelector(".visual-symbol").textContent = skill.symbol;
 
-    // 6. Display the learning topics
+    // 5. Display learning topics
     const learningList = document.getElementById("learningList");
     learningList.replaceChildren();
 
@@ -139,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function () {
         learningList.appendChild(listItem);
     });
 
-    // 7. Update the skill partner
+    // 6. Display skill partner
     document.getElementById("teacherName").textContent = skill.teacher;
     document.getElementById("teacherRole").textContent = skill.role;
     document.getElementById("teacherDescription").textContent =
@@ -148,18 +147,105 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("teacherAvatar").textContent =
         skill.teacher.charAt(0).toUpperCase();
 
-    // 8. Handle the Request to Learn button
+    // 7. Request and notification storage keys
     const requestButton = document.getElementById("requestButton");
     const requestMessage = document.getElementById("requestMessage");
 
+    const requestStorageKey = "skillswapDemoRequests";
+    const notificationStorageKey = "skillswapNotifications";
+
+    function readStorage(key) {
+        const savedData = localStorage.getItem(key);
+
+        if (savedData === null) {
+            return [];
+        }
+
+        const parsedData = JSON.parse(savedData);
+
+        if (!Array.isArray(parsedData)) {
+            throw new Error(key + " does not contain a valid array.");
+        }
+
+        return parsedData;
+    }
+
+    // 8. Send request when the button is clicked
     if (requestButton && requestMessage) {
-    requestButton.addEventListener("click", function () {
-        requestMessage.textContent =
-            "Demo only: Your request to learn " + skill.title +
-            " has been prepared. Backend connection is not available yet.";
+        requestButton.addEventListener("click", function () {
 
-        requestMessage.style.color = "#65a7ff";
-    });
-}
+            requestButton.disabled = true;
+            requestMessage.textContent = "Sending your request...";
+            requestMessage.style.color = "#65a7ff";
 
+            try {
+                const requests = readStorage(requestStorageKey);
+                const notifications = readStorage(notificationStorageKey);
+
+                // Prevent accidental duplicate pending requests
+                const alreadyRequested = requests.some(function (request) {
+                    return request.wantedSkill === skill.title &&
+                        request.status === "Pending";
+                });
+
+                if (alreadyRequested) {
+                    requestMessage.textContent =
+                        "You already have a pending request for " +
+                        skill.title + ".";
+                    requestMessage.style.color = "#ffcc80";
+                    return;
+                }
+
+                // Create the request
+                const request = {
+                    id: Date.now().toString() +
+                        Math.random().toString(36).slice(2),
+                    userName: skill.teacher,
+                    wantedSkill: skill.title,
+                    offeredSkill: "To be discussed",
+                    status: "Pending",
+                    createdAt: new Date().toISOString()
+                };
+
+                // Create the notification
+                const notification = {
+                    id: Date.now().toString() +
+                        Math.random().toString(36).slice(2),
+                    message: "Your request to learn " + skill.title +
+                        " has been sent. Status: Pending.",
+                    read: false,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Save both
+                requests.push(request);
+                notifications.unshift(notification);
+
+                localStorage.setItem(
+                    requestStorageKey,
+                    JSON.stringify(requests)
+                );
+
+                localStorage.setItem(
+                    notificationStorageKey,
+                    JSON.stringify(notifications)
+                );
+
+                requestMessage.textContent =
+                    "Request sent successfully! Your request for " +
+                    skill.title + " is pending.";
+                requestMessage.style.color = "#72e6a5";
+
+            } catch (error) {
+                console.error("SkillSwap request error:", error);
+
+                requestMessage.textContent =
+                    "Could not send your request. Please check the browser console.";
+                requestMessage.style.color = "#ffb3bb";
+
+            } finally {
+                requestButton.disabled = false;
+            }
+        });
+    }
 });

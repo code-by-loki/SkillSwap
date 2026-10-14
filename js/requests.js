@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     const requestsList = document.getElementById("requestsList");
     const emptyState = document.getElementById("emptyState");
@@ -8,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pageMessage = document.getElementById("pageMessage");
 
     const storageKey = "skillswapDemoRequests";
+    const notificationStorageKey = "skillswapNotifications";
 
     function getRequests() {
         try {
@@ -30,6 +32,43 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             pageMessage.textContent =
                 "Could not save changes. Check your browser storage.";
+            return false;
+        }
+    }
+
+    // Create a notification when a request status changes.
+    function createNotification(request, newStatus) {
+        try {
+            const savedData = JSON.parse(
+                localStorage.getItem(notificationStorageKey) || "[]"
+            );
+
+            const notifications = Array.isArray(savedData)
+                ? savedData
+                : [];
+
+            notifications.unshift({
+                id: Date.now().toString() + Math.random().toString(36).slice(2),
+                message:
+                    "The request from " +
+                    (request.userName || "SkillSwap Member") +
+                    " for " +
+                    (request.wantedSkill || "a skill") +
+                    " has been " +
+                    newStatus.toLowerCase() +
+                    ".",
+                read: false,
+                createdAt: new Date().toLocaleString()
+            });
+
+            localStorage.setItem(
+                notificationStorageKey,
+                JSON.stringify(notifications)
+            );
+
+            return true;
+        } catch (error) {
+            console.error("Could not save notification:", error);
             return false;
         }
     }
@@ -70,11 +109,25 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        requests[index].status = newStatus;
+        const request = requests[index];
+
+        if (request.status !== "Pending" && request.status) {
+            pageMessage.textContent =
+                "This request has already been processed.";
+            renderRequests();
+            return;
+        }
+
+        request.status = newStatus;
 
         if (saveRequests(requests)) {
-            pageMessage.textContent =
-                "Request status updated to " + newStatus + ".";
+            const notificationSaved = createNotification(request, newStatus);
+
+            pageMessage.textContent = notificationSaved
+                ? "Request " + newStatus.toLowerCase() +
+                  ". Notification created."
+                : "Request status updated, but notification could not be saved.";
+
             renderRequests();
         }
     }

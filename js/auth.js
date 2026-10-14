@@ -1,21 +1,40 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    const USERS_KEY = "skillswapDemoUsers";
+    const SESSION_KEY = "skillswapDemoSession";
+
     const registerForm = document.getElementById("registerForm");
     const loginForm = document.getElementById("loginForm");
 
-    const PROFILE_KEY = "skillswapDemoProfile";
-    const DETAILS_KEY = "skillswapDemoProfileDetails";
-    const SESSION_KEY = "skillswapDemoSession";
+    // Read all registered demo users
+    function getUsers() {
+        const savedUsers = localStorage.getItem(USERS_KEY);
+
+        if (!savedUsers) {
+            return [];
+        }
+
+        const users = JSON.parse(savedUsers);
+
+        if (!Array.isArray(users)) {
+            throw new Error("Invalid user data.");
+        }
+
+        return users;
+    }
+
+    // Save all registered demo users
+    function saveUsers(users) {
+        localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
 
     // =========================
     // REGISTER
     // =========================
 
     if (registerForm) {
-
         registerForm.addEventListener("submit", function (event) {
-
             event.preventDefault();
 
             const name = document.getElementById("fullName").value.trim();
@@ -34,12 +53,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            if (password !== confirmPassword) {
-                message.textContent = "Passwords do not match.";
-                message.style.color = "#ff7777";
-                return;
-            }
-
             if (password.length < 6) {
                 message.textContent =
                     "Password must contain at least 6 characters.";
@@ -47,30 +60,39 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
+            if (password !== confirmPassword) {
+                message.textContent = "Passwords do not match.";
+                message.style.color = "#ff7777";
+                return;
+            }
+
             try {
+                const users = getUsers();
 
-                // Save basic demo account details.
-                // Never save the password in localStorage.
+                const emailExists = users.some(function (user) {
+                    return user.email === email;
+                });
 
-                const profile = {
+                if (emailExists) {
+                    message.textContent =
+                        "This email is already registered. Please login.";
+                    message.style.color = "#ff7777";
+                    return;
+                }
+
+                const newUser = {
+                    id: "user_" + Date.now() +
+                        "_" + Math.random().toString(36).slice(2),
                     name: name,
-                    email: email
+                    email: email,
+                    password: password
                 };
 
-                localStorage.setItem(
-                    PROFILE_KEY,
-                    JSON.stringify(profile)
-                );
-
-                // Remove old profile details so another demo registration
-                // does not accidentally display the previous person's data.
-                localStorage.removeItem(DETAILS_KEY);
-
-                // Clear any previous login session.
-                sessionStorage.removeItem(SESSION_KEY);
+                users.push(newUser);
+                saveUsers(users);
 
                 message.textContent =
-                    "Registration successful! Please login to continue.";
+                    "Registration successful! Please login.";
 
                 message.style.color = "#72e6a5";
 
@@ -83,10 +105,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 message.appendChild(link);
 
             } catch (error) {
+                console.error("Registration error:", error);
 
                 message.textContent =
-                    "Unable to save your demo profile in this browser.";
-
+                    "Could not register. Please check browser storage.";
                 message.style.color = "#ff7777";
             }
         });
@@ -97,9 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // =========================
 
     if (loginForm) {
-
         loginForm.addEventListener("submit", function (event) {
-
             event.preventDefault();
 
             const email = document.getElementById("loginEmail")
@@ -111,54 +131,40 @@ document.addEventListener("DOMContentLoaded", function () {
             const message = document.getElementById("loginMessage");
 
             try {
+                const users = getUsers();
 
-                const savedProfile = localStorage.getItem(PROFILE_KEY);
+                const matchedUser = users.find(function (user) {
+                    return user.email === email &&
+                        user.password === password;
+                });
 
-                if (!savedProfile) {
+                if (!matchedUser) {
                     message.textContent =
-                        "Please register a demo profile first.";
-
+                        "Invalid email or password.";
                     message.style.color = "#ff7777";
                     return;
                 }
 
-                const profile = JSON.parse(savedProfile);
-
-                if (profile.email !== email) {
-                    message.textContent =
-                        "Email not found. Please check your email or register first.";
-
-                    message.style.color = "#ff7777";
-                    return;
-                }
-
-                if (password.length < 6) {
-                    message.textContent =
-                        "Please enter at least 6 characters for the password.";
-
-                    message.style.color = "#ff7777";
-                    return;
-                }
-
-                // Demo session only.
-                // This does not verify the actual password.
-
-                sessionStorage.setItem(SESSION_KEY, profile.email);
+                // Store only the current user's ID in this tab's session
+                sessionStorage.setItem(
+                    SESSION_KEY,
+                    matchedUser.id
+                );
 
                 message.textContent =
-                    "Demo login successful! Opening your profile...";
+                    "Login successful! Opening your profile...";
 
                 message.style.color = "#72e6a5";
 
                 setTimeout(function () {
                     window.location.href = "profile.html";
-                }, 1000);
+                }, 700);
 
             } catch (error) {
+                console.error("Login error:", error);
 
                 message.textContent =
-                    "Unable to read demo profile. Please register again.";
-
+                    "Could not login. Please check browser storage.";
                 message.style.color = "#ff7777";
             }
         });
