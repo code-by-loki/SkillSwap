@@ -161,7 +161,7 @@ p {
 
 /* Register button */
 .register-btn {
-    padding: 11px 18px;
+    padding:13.5px 20px;
     border-radius: 8px;
     background: linear-gradient(135deg, #5277ff, #8b5cf6);
     color: #ffffff;
