@@ -2,27 +2,27 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     // ==========================================
-    // 1. GET SELECTED SKILL FROM URL
+    // 1. GET SELECTED SKILL
     // ==========================================
 
     const urlParams = new URLSearchParams(window.location.search);
     const selectedSkill = urlParams.get("skill");
 
     // ==========================================
-    // 2. SKILL DETAILS
+    // 2. SKILL INFORMATION
+    // No hardcoded teacher names
     // ==========================================
 
     const skills = {
         java: {
             category: "PROGRAMMING",
             title: "Java Programming",
-            description: "Learn Java fundamentals, object-oriented programming, and practical coding through beginner-friendly exercises.",
+            description:
+                "Learn Java fundamentals, object-oriented programming, and practical coding through beginner-friendly exercises.",
             level: "Beginner Friendly",
             duration: "Flexible Sessions",
             symbol: "</>",
-            teacher: "Arun Kumar",
-            role: "Java Learner & Skill Sharer",
-            teacherDescription: "I enjoy explaining Java concepts, solving coding problems, and helping beginners practise step by step.",
+            searchNames: ["java", "java programming", "core java"],
             learning: [
                 "Java variables and data types",
                 "Conditions and loops",
@@ -34,13 +34,12 @@ document.addEventListener("DOMContentLoaded", function () {
         uiux: {
             category: "DESIGN",
             title: "UI/UX Design",
-            description: "Explore user interface design, user experience principles, and how to create simple, user-friendly digital products.",
+            description:
+                "Explore user interface design, user experience principles, and user-friendly digital products.",
             level: "Beginner Friendly",
             duration: "Flexible Sessions",
             symbol: "✦",
-            teacher: "Priya S",
-            role: "UI/UX Design Enthusiast",
-            teacherDescription: "I enjoy creating clean interfaces and sharing design ideas that make websites and apps easier to use.",
+            searchNames: ["uiux", "ui/ux", "ui ux design", "design"],
             learning: [
                 "UI and UX fundamentals",
                 "Colour combinations and typography",
@@ -52,13 +51,12 @@ document.addEventListener("DOMContentLoaded", function () {
         english: {
             category: "LANGUAGES",
             title: "English Speaking",
-            description: "Improve your everyday English through simple conversations, useful vocabulary, and friendly speaking practice.",
+            description:
+                "Improve everyday English through useful vocabulary, friendly conversations, and speaking practice.",
             level: "All Beginner Levels",
             duration: "Flexible Sessions",
             symbol: "Aa",
-            teacher: "Rahul M",
-            role: "English Practice Partner",
-            teacherDescription: "I enjoy practising everyday English conversations and helping learners become more confident speakers.",
+            searchNames: ["english", "english speaking", "spoken english"],
             learning: [
                 "Everyday English sentences",
                 "Common words and vocabulary",
@@ -70,13 +68,12 @@ document.addEventListener("DOMContentLoaded", function () {
         photography: {
             category: "PHOTOGRAPHY",
             title: "Photography Basics",
-            description: "Learn how to take better photos using composition, lighting, camera settings, and creative observation.",
+            description:
+                "Learn composition, lighting, camera settings, and creative photography.",
             level: "Beginner Friendly",
             duration: "Flexible Sessions",
             symbol: "◎",
-            teacher: "Meena K",
-            role: "Photography Enthusiast",
-            teacherDescription: "I love capturing everyday moments and sharing practical tips to help beginners improve their photography.",
+            searchNames: ["photography", "photography basics"],
             learning: [
                 "Composition and framing",
                 "Lighting and shadows",
@@ -88,13 +85,12 @@ document.addEventListener("DOMContentLoaded", function () {
         guitar: {
             category: "MUSIC",
             title: "Guitar Basics",
-            description: "Start your musical journey by learning basic chords, simple strumming patterns, and beginner-friendly songs.",
+            description:
+                "Learn basic chords, strumming patterns, and beginner-friendly songs.",
             level: "Beginner Friendly",
             duration: "Flexible Sessions",
             symbol: "♫",
-            teacher: "Karthik R",
-            role: "Guitar Enthusiast",
-            teacherDescription: "I enjoy playing guitar and helping beginners get comfortable with basic chords and rhythms.",
+            searchNames: ["guitar", "guitar basics", "music"],
             learning: [
                 "Guitar parts and tuning",
                 "Basic guitar chords",
@@ -104,15 +100,20 @@ document.addEventListener("DOMContentLoaded", function () {
         },
 
         webdev: {
-            category: "WEB DEVELOPMENT",
+            category: "PROGRAMMING",
             title: "Web Development",
-            description: "Discover how websites are built using HTML, CSS, and JavaScript, then practise creating your own web pages.",
+            description:
+                "Learn how websites are built using HTML, CSS, and JavaScript.",
             level: "Beginner Friendly",
             duration: "Flexible Sessions",
             symbol: "{ }",
-            teacher: "Sanjay V",
-            role: "Web Development Enthusiast",
-            teacherDescription: "I enjoy building websites and sharing frontend development concepts with people who are just getting started.",
+            searchNames: [
+                "webdev",
+                "web development",
+                "html",
+                "css",
+                "javascript"
+            ],
             learning: [
                 "HTML structure and elements",
                 "CSS styling and layouts",
@@ -122,11 +123,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    const skill = skills[selectedSkill] || skills.java;
+    // ==========================================
+    // 3. GET HTML ELEMENTS
+    // ==========================================
 
-    // ==========================================
-    // 3. DISPLAY SKILL DETAILS
-    // ==========================================
+    const teachersContainer =
+        document.getElementById("registeredTeachers");
+
+    const requestStorageKey = "skillswapDemoRequests";
+    const notificationStorageKey = "skillswapNotifications";
+    const usersKey = "skillswapDemoUsers";
+    const detailsKey = "skillswapDemoProfileDetailsByUser";
+    const sessionKey = "skillswapDemoSession";
 
     function setText(id, value) {
         const element = document.getElementById(id);
@@ -135,6 +143,85 @@ document.addEventListener("DOMContentLoaded", function () {
             element.textContent = value;
         }
     }
+
+    // ==========================================
+    // 4. STORAGE HELPERS
+    // ==========================================
+
+    function readArray(key) {
+        try {
+            const value = JSON.parse(localStorage.getItem(key) || "[]");
+            return Array.isArray(value) ? value : [];
+        } catch (error) {
+            console.error("Storage read error:", key, error);
+            return [];
+        }
+    }
+
+    function readObject(key) {
+        try {
+            const value = JSON.parse(localStorage.getItem(key) || "{}");
+
+            return value &&
+                typeof value === "object" &&
+                !Array.isArray(value)
+                ? value
+                : {};
+        } catch (error) {
+            console.error("Storage read error:", key, error);
+            return {};
+        }
+    }
+
+    function normalize(value) {
+        return String(value || "")
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, " ");
+    }
+
+    function getMemberName(user, details) {
+        return (
+            details.name ||
+            user.name ||
+            "SkillSwap Member"
+        );
+    }
+
+    // ==========================================
+    // 5. VALIDATE SELECTED SKILL
+    // ==========================================
+
+    const skill = skills[selectedSkill];
+
+    if (!skill) {
+        setText("skillCategory", "SKILL");
+        setText("skillTitle", "Skill Not Found");
+        setText(
+            "skillDescription",
+            "This skill could not be found. Please return to Explore Skills and select a valid skill."
+        );
+
+        if (teachersContainer) {
+            teachersContainer.replaceChildren();
+
+            const message = document.createElement("p");
+            message.textContent = "Please select a skill from Explore Skills.";
+            teachersContainer.appendChild(message);
+        }
+
+        const learningList = document.getElementById("learningList");
+
+        if (learningList) {
+            learningList.replaceChildren();
+        }
+
+        return;
+    }
+
+    // ==========================================
+    // 6. DISPLAY SELECTED SKILL DETAILS
+    // ==========================================
 
     setText("skillCategory", skill.category);
     setText("skillTitle", skill.title);
@@ -148,296 +235,332 @@ document.addEventListener("DOMContentLoaded", function () {
         visualSymbol.textContent = skill.symbol;
     }
 
-    // ==========================================
-    // 4. DISPLAY LEARNING TOPICS
-    // ==========================================
-
     const learningList = document.getElementById("learningList");
 
     if (learningList) {
         learningList.replaceChildren();
 
         skill.learning.forEach(function (topic) {
-            const listItem = document.createElement("li");
-            listItem.textContent = topic;
-            learningList.appendChild(listItem);
+            const item = document.createElement("li");
+            item.textContent = topic;
+            learningList.appendChild(item);
         });
     }
 
     // ==========================================
-    // 5. DISPLAY TEACHER DETAILS
+    // 7. CHECK WHETHER A USER TEACHES THIS SKILL
     // ==========================================
 
-    setText("teacherName", skill.teacher);
-    setText("teacherRole", skill.role);
-    setText("teacherDescription", skill.teacherDescription);
-
-    setText(
-        "teacherAvatar",
-        skill.teacher.charAt(0).toUpperCase()
-    );
-
-    // ==========================================
-    // 6. STORAGE KEYS
-    // ==========================================
-
-    const requestButton = document.getElementById("requestButton");
-    const requestMessage = document.getElementById("requestMessage");
-
-    const requestStorageKey = "skillswapDemoRequests";
-    const notificationStorageKey = "skillswapNotifications";
-    const usersKey = "skillswapDemoUsers";
-    const detailsKey = "skillswapDemoProfileDetailsByUser";
-    const sessionKey = "skillswapDemoSession";
-
-    // ==========================================
-    // 7. READ ARRAY FROM LOCAL STORAGE
-    // ==========================================
-
-    function readArray(key) {
-        try {
-            const data = JSON.parse(
-                localStorage.getItem(key) || "[]"
-            );
-
-            return Array.isArray(data) ? data : [];
-
-        } catch (error) {
-            console.error("Could not read array:", key, error);
-            return [];
-        }
+   
+function teachesSelectedSkill(teachSkills) {
+    if (!Array.isArray(teachSkills)) {
+        return false;
     }
 
+    const aliases = {
+        "java": ["java", "core java", "java programming"],
+        "uiux": ["uiux", "ui ux", "ui/ux", "ui ux design", "ui/ux design"],
+        "english": ["english", "english speaking", "spoken english"],
+        "photography": ["photography", "photography basics"],
+        "guitar": ["guitar", "guitar basics"],
+        "webdev": [
+            "webdev",
+            "web development",
+            "html",
+            "css",
+            "javascript"
+        ]
+    };
+
+    const acceptedNames = (aliases[selectedSkill] || skill.searchNames)
+        .map(function (name) {
+            return normalize(name);
+        });
+
+    return teachSkills.some(function (teachSkill) {
+        const enteredSkill = normalize(teachSkill);
+
+        return acceptedNames.includes(enteredSkill);
+    });
+}
+
     // ==========================================
-    // 8. READ OBJECT FROM LOCAL STORAGE
+    // 8. DISPLAY REGISTERED TEACHERS
     // ==========================================
 
-    function readObject(key) {
-        try {
-            const data = JSON.parse(
-                localStorage.getItem(key) || "{}"
-            );
-
-            return data &&
-                typeof data === "object" &&
-                !Array.isArray(data)
-                    ? data
-                    : {};
-
-        } catch (error) {
-            console.error("Could not read object:", key, error);
-            return {};
-        }
-    }
-
-    // ==========================================
-    // 9. DISPLAY MESSAGE
-    // ==========================================
-
-    function showMessage(message, color) {
-        if (!requestMessage) {
+    function renderTeachers() {
+        if (!teachersContainer) {
             return;
         }
 
-        requestMessage.textContent = message;
-        requestMessage.style.color = color;
-    }
+        teachersContainer.replaceChildren();
 
-    // ==========================================
-    // 10. HANDLE REQUEST BUTTON
-    // ==========================================
+        const users = readArray(usersKey);
+        const detailsByUser = readObject(detailsKey);
+        const currentUserId = sessionStorage.getItem(sessionKey);
 
-    if (requestButton && requestMessage) {
-
-        requestButton.addEventListener("click", function () {
-
-            const senderId = sessionStorage.getItem(sessionKey);
-
-            // Check login.
-            if (!senderId) {
-                showMessage(
-                    "Please log in before sending a request.",
-                    "#ffb3bb"
-                );
-                return;
+        const teachers = users.filter(function (user) {
+            if (!user || user.id == null) {
+                return false;
             }
 
-            // Prevent repeated clicks while saving.
-            if (requestButton.disabled) {
-                return;
+            // Don't show the logged-in user as their own teacher.
+            if (
+                currentUserId &&
+                String(user.id) === String(currentUserId)
+            ) {
+                return false;
             }
 
-            requestButton.disabled = true;
-            showMessage("Sending your request...", "#65a7ff");
+            const details = detailsByUser[user.id] || {};
 
-            try {
-                const users = readArray(usersKey);
-                const detailsByUser = readObject(detailsKey);
+            return teachesSelectedSkill(details.teachSkills);
+        });
 
-                // Find sender.
-                const sender = users.find(function (user) {
-                    return String(user.id) === String(senderId);
-                });
+        if (teachers.length === 0) {
+            const emptyMessage = document.createElement("p");
+            emptyMessage.className = "no-teachers-message";
+            emptyMessage.textContent =
+                "No teachers registered for this skill yet.";
 
-                if (!sender) {
-                    showMessage(
-                        "Your account could not be found. Please log in again.",
-                        "#ffb3bb"
-                    );
-                    return;
-                }
+            teachersContainer.appendChild(emptyMessage);
+            return;
+        }
 
-                // Find receiver from the URL, if provided.
-                const pageParams = new URLSearchParams(
-                    window.location.search
-                );
+        teachers.forEach(function (teacher) {
+            const details = detailsByUser[teacher.id] || {};
+            const teacherName = getMemberName(teacher, details);
 
-                const receiverId = pageParams.get("userId");
+            // Teacher card
+            const card = document.createElement("article");
+            card.className = "registered-teacher-card";
 
-                let receiver = receiverId
-                    ? users.find(function (user) {
-                        return String(user.id) === String(receiverId);
-                    })
-                    : null;
+            // Avatar
+            const avatar = document.createElement("div");
+            avatar.className = "teacher-avatar";
+            avatar.textContent = teacherName.charAt(0).toUpperCase();
 
-                // For the original demo skills, match the teacher name.
-                if (!receiver && !receiverId) {
-                    receiver = users.find(function (user) {
-                        const name =
-                            detailsByUser[user.id]?.name ||
-                            user.name ||
-                            "";
+            // Teacher information
+            const info = document.createElement("div");
+            info.className = "registered-teacher-info";
 
-                        return name.trim().toLowerCase() ===
-                            skill.teacher.trim().toLowerCase();
-                    });
-                }
+            const name = document.createElement("h3");
+            name.textContent = teacherName;
 
-                if (!receiver) {
-                    showMessage(
-                        "This skill does not have a linked registered member yet.",
-                        "#ffcc80"
-                    );
-                    return;
-                }
+            const role = document.createElement("p");
+            role.className = "teacher-role";
+            role.textContent = "Registered SkillSwap Member";
 
-                // Prevent sending a request to yourself.
-                if (String(receiver.id) === String(senderId)) {
-                    showMessage(
-                        "You cannot send a request to yourself.",
-                        "#ffcc80"
-                    );
-                    return;
-                }
+            const bio = document.createElement("p");
+            bio.className = "teacher-description";
+            bio.textContent =
+                details.bio || "Ready to share knowledge and learn together.";
 
-                const senderDetails = detailsByUser[sender.id] || {};
-                const receiverDetails = detailsByUser[receiver.id] || {};
+            const skillsText = document.createElement("p");
+            skillsText.className = "teacher-skills";
 
-                const senderName =
-                    senderDetails.name ||
-                    sender.name ||
-                    "SkillSwap Member";
+            const teacherSkills = Array.isArray(details.teachSkills)
+                ? details.teachSkills
+                : [];
 
-                const receiverName =
-                    receiverDetails.name ||
-                    receiver.name ||
-                    skill.teacher;
+            skillsText.textContent =
+                "Teaching: " + teacherSkills.join(", ");
 
-                const requests = readArray(requestStorageKey);
+            info.append(name, role, bio, skillsText);
 
-                // Prevent duplicate pending requests to the same member
-                // for the same skill from the same sender.
-                const alreadyRequested = requests.some(function (request) {
-                    return (
-                        String(request.senderId) === String(senderId) &&
-                        String(request.receiverId) === String(receiver.id) &&
-                        request.wantedSkill === skill.title &&
-                        (request.status || "Pending") === "Pending"
-                    );
-                });
+            // View Profile
+            const profileLink = document.createElement("a");
+            profileLink.className = "view-profile-button";
+            profileLink.href =
+                "user-profile.html?userId=" +
+                encodeURIComponent(teacher.id);
+            profileLink.textContent = "View Profile";
 
-                if (alreadyRequested) {
-                    showMessage(
-                        "You already have a pending request for this member and skill.",
-                        "#ffcc80"
-                    );
-                    return;
-                }
+            // Request button
+            const requestButton = document.createElement("button");
+            requestButton.type = "button";
+            requestButton.className = "request-button teacher-request-button";
+            requestButton.textContent = "Request to Learn";
 
-                // Build request object.
-                const request = {
-                    id:
-                        Date.now().toString() +
-                        Math.random().toString(36).slice(2),
+            const message = document.createElement("p");
+            message.className = "teacher-request-message";
+            message.setAttribute("aria-live", "polite");
 
-                    senderId: sender.id,
-                    receiverId: receiver.id,
-                    userName: senderName,
-                    receiverName: receiverName,
-                    wantedSkill: skill.title,
+            requestButton.addEventListener("click", function () {
+                sendRequest(teacher, requestButton, message);
+            });
 
-                    offeredSkill: Array.isArray(senderDetails.teachSkills)
-                        ? senderDetails.teachSkills.join(", ") ||
-                          "To be discussed"
-                        : "To be discussed",
+            const actions = document.createElement("div");
+            actions.className = "teacher-card-actions";
+            actions.append(profileLink, requestButton);
 
-                    status: "Pending",
-                    createdAt: new Date().toISOString()
-                };
+            card.append(avatar, info, actions, message);
 
-                const notifications = readArray(
-                    notificationStorageKey
-                );
-
-                const notification = {
-                    id:
-                        Date.now().toString() +
-                        Math.random().toString(36).slice(2),
-
-                    userId: receiver.id,
-                    requestId: request.id,
-                    type: "new-request",
-
-                    message:
-                        senderName +
-                        " wants to learn " +
-                        skill.title +
-                        " from you.",
-
-                    read: false,
-                    createdAt: new Date().toISOString()
-                };
-
-                // Save request and notification.
-                localStorage.setItem(
-                    requestStorageKey,
-                    JSON.stringify([...requests, request])
-                );
-
-                localStorage.setItem(
-                    notificationStorageKey,
-                    JSON.stringify([...notifications, notification])
-                );
-
-                showMessage(
-                    "Request sent to " + receiverName + " successfully!",
-                    "#72e6a5"
-                );
-
-                requestButton.textContent = "Request Sent";
-
-            } catch (error) {
-                console.error("SkillSwap request error:", error);
-
-                showMessage(
-                    "Could not send your request. Please check the browser console.",
-                    "#ffb3bb"
-                );
-
-            } finally {
-                requestButton.disabled = false;
-            }
+            teachersContainer.appendChild(card);
         });
     }
+
+    // ==========================================
+    // 9. SEND REQUEST TO A SELECTED TEACHER
+    // ==========================================
+
+    function sendRequest(teacher, button, messageElement) {
+        const senderId = sessionStorage.getItem(sessionKey);
+
+        function showMessage(message, color) {
+            messageElement.textContent = message;
+            messageElement.style.color = color;
+        }
+
+        if (!senderId) {
+            showMessage(
+                "Please log in before sending a request.",
+                "#d9534f"
+            );
+            return;
+        }
+
+        if (String(senderId) === String(teacher.id)) {
+            showMessage(
+                "You cannot send a request to yourself.",
+                "#d9534f"
+            );
+            return;
+        }
+
+        button.disabled = true;
+        showMessage("Sending request...", "#3478db");
+
+        try {
+            const users = readArray(usersKey);
+            const detailsByUser = readObject(detailsKey);
+
+            const sender = users.find(function (user) {
+                return String(user.id) === String(senderId);
+            });
+
+            const receiver = users.find(function (user) {
+                return String(user.id) === String(teacher.id);
+            });
+
+            if (!sender || !receiver) {
+                showMessage(
+                    "Account not found. Please log in again.",
+                    "#d9534f"
+                );
+                return;
+            }
+
+            const receiverDetails = detailsByUser[receiver.id] || {};
+
+            // Recheck teaching skill before creating a request.
+            if (!teachesSelectedSkill(receiverDetails.teachSkills)) {
+                showMessage(
+                    "This member is no longer listed for this skill. Refresh the page.",
+                    "#d9534f"
+                );
+                return;
+            }
+
+            const senderDetails = detailsByUser[sender.id] || {};
+
+            const senderName = getMemberName(sender, senderDetails);
+            const receiverName = getMemberName(receiver, receiverDetails);
+
+            const requests = readArray(requestStorageKey);
+
+            const alreadyRequested = requests.some(function (request) {
+                return (
+                    String(request.senderId) === String(sender.id) &&
+                    String(request.receiverId) === String(receiver.id) &&
+                    normalize(request.wantedSkill) === normalize(skill.title) &&
+                    normalize(request.status || "Pending") === "pending"
+                );
+            });
+
+            if (alreadyRequested) {
+                showMessage(
+                    "You already have a pending request to this teacher for this skill.",
+                    "#b7791f"
+                );
+                return;
+            }
+
+            const request = {
+                id:
+                    Date.now().toString() +
+                    Math.random().toString(36).slice(2),
+
+                senderId: sender.id,
+                receiverId: receiver.id,
+                userName: senderName,
+                receiverName: receiverName,
+                wantedSkill: skill.title,
+
+                offeredSkill: Array.isArray(senderDetails.teachSkills)
+                    ? senderDetails.teachSkills.join(", ") || "To be discussed"
+                    : "To be discussed",
+
+                status: "Pending",
+                createdAt: new Date().toISOString()
+            };
+
+            const notifications = readArray(notificationStorageKey);
+
+            const notification = {
+                id:
+                    Date.now().toString() +
+                    Math.random().toString(36).slice(2),
+
+                userId: receiver.id,
+                requestId: request.id,
+                type: "new-request",
+
+                message:
+                    senderName +
+                    " wants to learn " +
+                    skill.title +
+                    " from you.",
+
+                read: false,
+                createdAt: new Date().toISOString()
+            };
+
+            // Save request first, then notification.
+            localStorage.setItem(
+                requestStorageKey,
+                JSON.stringify([...requests, request])
+            );
+
+            localStorage.setItem(
+                notificationStorageKey,
+                JSON.stringify([...notifications, notification])
+            );
+
+            showMessage(
+                "Request sent to " + receiverName + " successfully!",
+                "#198754"
+            );
+
+            button.textContent = "Request Sent";
+
+        } catch (error) {
+            console.error("SkillSwap request error:", error);
+
+            showMessage(
+                "Could not send the request. Please try again.",
+                "#d9534f"
+            );
+
+        } finally {
+            button.disabled = false;
+        }
+    }
+
+    // ==========================================
+    // 10. INITIALIZE TEACHER LIST
+    // ==========================================
+
+    renderTeachers();
 
 });

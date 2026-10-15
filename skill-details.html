@@ -1,6 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,17 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/skill-details.css">
 </head>
+
 <body>
 
+    <!-- Navigation Bar -->
     <header class="details-navbar">
+
         <a href="index.html" class="details-logo">
-            <img src="images/skillswap-logo.png" alt="SkillSwap Logo">
+            <img
+                src="images/skillswap-logo.png"
+                alt="SkillSwap Logo"
+            >
             <span>SkillSwap</span>
         </a>
 
@@ -23,114 +30,187 @@
             <a href="explore.html">Explore</a>
             <a href="profile.html">My Profile</a>
         </nav>
+
     </header>
 
+
+    <!-- Main Content -->
     <main class="details-container">
 
+        <!-- Back to Explore -->
         <a href="explore.html" class="back-link">
             ← Back to Explore
         </a>
 
+
+        <!-- Selected Skill Details -->
         <section class="skill-hero">
+
             <div class="skill-hero-content">
+
                 <span class="skill-label" id="skillCategory">
                     PROGRAMMING
                 </span>
 
-                <h1 id="skillTitle">Java Programming</h1>
+                <h1 id="skillTitle">
+                    Java Programming
+                </h1>
 
                 <p id="skillDescription">
                     Learn Java fundamentals, object-oriented programming,
-                    and practical coding from another learner.
+                    and practical coding through beginner-friendly exercises.
                 </p>
 
                 <div class="skill-meta">
-                    <span id="skillLevel">Beginner Friendly</span>
-                    <span id="skillDuration">Flexible Sessions</span>
+
+                    <span id="skillLevel">
+                        Beginner Friendly
+                    </span>
+
+                    <span id="skillDuration">
+                        Flexible Sessions
+                    </span>
+
                 </div>
 
-                <button type="button" id="requestButton"
-                    class="request-button">
-                    Request to Learn
-                </button>
-
-                <p id="requestMessage" aria-live="polite"></p>
             </div>
 
+
+            <!-- Skill Illustration -->
             <div class="skill-visual" aria-hidden="true">
+
                 <span class="visual-symbol">&lt;/&gt;</span>
-                <span class="visual-caption">LEARN. PRACTICE. GROW.</span>
+
+                <span class="visual-caption">
+                    LEARN. PRACTICE. GROW.
+                </span>
+
             </div>
+
         </section>
 
+
+        <!-- Learning Topics and Registered Teachers -->
         <section class="details-grid">
 
+
+            <!-- Learning Topics -->
             <article class="details-panel">
+
                 <h2>What You'll Learn</h2>
 
                 <ul id="learningList">
+
                     <li>Java variables and data types</li>
+
                     <li>Conditions and loops</li>
+
                     <li>Object-oriented programming basics</li>
+
                     <li>Practice through coding exercises</li>
+
                 </ul>
+
             </article>
 
+
+            <!-- Registered Teachers -->
             <article class="details-panel teacher-panel">
-                <h2>Your Skill Partner</h2>
 
-                <div class="teacher-profile">
-                    <div class="teacher-avatar" id="teacherAvatar">A</div>
+                <h2>Registered Teachers</h2>
 
-                    <div>
-                        <h3 id="teacherName">Arun Kumar</h3>
-                        <p id="teacherRole">Java Learner & Skill Sharer</p>
-                    </div>
+                <p class="teacher-intro">
+                    Learn from SkillSwap members who have registered
+                    this skill as one of their teaching skills.
+                </p>
+
+                <!-- JavaScript displays matching registered users here -->
+                <div
+                    id="registeredTeachers"
+                    class="registered-teachers"
+                    aria-live="polite"
+                >
+
+                    <p class="teachers-loading">
+                        Loading registered teachers...
+                    </p>
+
                 </div>
 
-                <p class="teacher-description" id="teacherDescription">
-                    I enjoy sharing programming concepts and helping
-                    beginners practise coding step by step.
-                </p>
-
-                <p class="partner-note">
-                    Connect with a community member to arrange a
-                    learning session.
-                </p>
             </article>
 
         </section>
 
+
+        <!-- How SkillSwap Works -->
         <section class="details-panel how-panel">
+
             <h2>How SkillSwap Works</h2>
 
             <div class="learning-steps">
+
+
                 <div>
+
                     <span>01</span>
-                    <h3>Send a Request</h3>
-                    <p>Tell the skill partner that you want to learn.</p>
+
+                    <h3>Choose a Teacher</h3>
+
+                    <p>
+                        Find a registered member who can teach your
+                        selected skill.
+                    </p>
+
                 </div>
 
+
                 <div>
+
                     <span>02</span>
-                    <h3>Connect</h3>
-                    <p>Discuss goals and choose a suitable session time.</p>
+
+                    <h3>Send a Request</h3>
+
+                    <p>
+                        Send a learning request to the member you
+                        want to learn from.
+                    </p>
+
                 </div>
 
+
                 <div>
+
                     <span>03</span>
+
                     <h3>Learn Together</h3>
-                    <p>Practise skills and share knowledge.</p>
+
+                    <p>
+                        Once your request is accepted, discuss your
+                        goals and arrange a learning session.
+                    </p>
+
                 </div>
+
             </div>
+
         </section>
 
     </main>
 
+
+    <!-- Footer -->
     <footer class="details-footer">
-        <p>&copy; 2026 SkillSwap. Learn together, grow together.</p>
+
+        <p>
+            &copy; 2026 SkillSwap. Learn together, grow together.
+        </p>
+
     </footer>
 
+
+    <!-- Skill Details JavaScript -->
     <script src="js/skill-details.js"></script>
+
 </body>
+
 </html>
