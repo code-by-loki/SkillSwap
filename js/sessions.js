@@ -58,18 +58,22 @@ function saveSessions(sessions) {
     );
 }
 
-
-// ========================================
-// 6. GET CURRENT USER'S SESSIONS
-// ========================================
+ // ========================================
+ // 6. GET CURRENT USER'S SESSIONS
+ // ========================================
 
 function getMySessions() {
     const allSessions = getSessions();
 
     return allSessions.filter(function (session) {
-        return String(session.userId) === String(currentUserId);
+        return (
+            String(session.userId) === String(currentUserId) ||
+            String(session.partnerId) === String(currentUserId)
+        );
     });
 }
+
+
 
 
 // ========================================
@@ -191,9 +195,17 @@ function renderSessions() {
         const title = document.createElement("h3");
         title.textContent = session.skill || "Skill Exchange";
 
+       
         const partner = document.createElement("p");
+
+        const partnerName =
+        String(session.userId) === String(currentUserId)
+        ? session.partnerName
+        : session.creatorName;
+
         partner.textContent =
-            "Learning partner: " + (session.partnerName || "Not specified");
+        "Learning partner: " + (partnerName || "Not specified");
+
 
         const date = document.createElement("p");
         date.textContent = "Date: " + formatDate(session.date);

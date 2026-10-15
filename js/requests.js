@@ -191,16 +191,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 throw new Error("Invalid sessions data");
             }
 
-            // Prevent duplicate sessions for the same request.
-            const alreadyExists = savedSessions.some(function (session) {
-                return String(session.requestId) === String(request.id);
-            });
-
-            if (alreadyExists) {
-                alert("A session already exists for this request.");
-                return;
-            }
-
             const newSession = {
                 id: Date.now().toString(),
                 requestId: request.id,
@@ -212,6 +202,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 partnerId: request.senderId,
 
                 partnerName: request.userName || "SkillSwap Member",
+                creatorName: request.receiverName || "SkillSwap Member",
 
                 skill: request.wantedSkill || "Skill Exchange",
                 offeredSkill: request.offeredSkill || "Not specified",
@@ -230,6 +221,13 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             alert("Session created successfully!");
+
+
+
+
+
+
+            
 
             // Correct page navigation.
             window.location.href = "sessions.html";

@@ -91,55 +91,46 @@
 
 
         <!-- Learning Topics and Registered Teachers -->
-        <section class="details-grid">
+        <!-- Learning Topics -->
+<section class="details-grid">
+
+    <article class="details-panel">
+
+        <h2>What You'll Learn</h2>
+
+        <ul id="learningList">
+            <li>Java variables and data types</li>
+            <li>Conditions and loops</li>
+            <li>Object-oriented programming basics</li>
+            <li>Practice through coding exercises</li>
+        </ul>
+
+    </article>
+
+</section>
 
 
-            <!-- Learning Topics -->
-            <article class="details-panel">
+<!-- Registered Teachers - Full Width -->
+<section class="details-panel teacher-panel">
 
-                <h2>What You'll Learn</h2>
+    <h2>Registered Teachers</h2>
 
-                <ul id="learningList">
+    <p class="teacher-intro">
+        Learn from SkillSwap members who have registered
+        this skill as one of their teaching skills.
+    </p>
 
-                    <li>Java variables and data types</li>
+    <div
+        id="registeredTeachers"
+        class="registered-teachers"
+        aria-live="polite"
+    >
+        <p class="teachers-loading">
+            Loading registered teachers...
+        </p>
+    </div>
 
-                    <li>Conditions and loops</li>
-
-                    <li>Object-oriented programming basics</li>
-
-                    <li>Practice through coding exercises</li>
-
-                </ul>
-
-            </article>
-
-
-            <!-- Registered Teachers -->
-            <article class="details-panel teacher-panel">
-
-                <h2>Registered Teachers</h2>
-
-                <p class="teacher-intro">
-                    Learn from SkillSwap members who have registered
-                    this skill as one of their teaching skills.
-                </p>
-
-                <!-- JavaScript displays matching registered users here -->
-                <div
-                    id="registeredTeachers"
-                    class="registered-teachers"
-                    aria-live="polite"
-                >
-
-                    <p class="teachers-loading">
-                        Loading registered teachers...
-                    </p>
-
-                </div>
-
-            </article>
-
-        </section>
+</section>
 
 
         <!-- How SkillSwap Works -->
