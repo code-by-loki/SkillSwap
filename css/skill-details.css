@@ -264,3 +264,352 @@
         gap: 12px;
     }
 }
+
+
+/* Registered Teachers - Grid Layout */
+#registeredTeachers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    margin-top: 25px;
+    align-items: stretch;
+}
+
+/* Each Teacher - Separate Card */
+.registered-teacher-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 24px;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(94, 158, 255, 0.25);
+    border-radius: 18px;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.registered-teacher-card:hover {
+    transform: translateY(-4px);
+    border-color: #5e9eff;
+    box-shadow: 0 12px 30px rgba(59, 91, 253, 0.18);
+}
+
+/* Avatar */
+.registered-teacher-card .teacher-avatar {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b5bfd, #5e9eff);
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* Profile Information */
+.registered-teacher-info {
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.registered-teacher-info h3 {
+    margin: 0 0 8px;
+    font-size: 21px;
+}
+
+.registered-teacher-info p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.registered-teacher-info .teacher-role {
+    opacity: 0.8;
+}
+
+.registered-teacher-info .teacher-skills {
+    margin-top: 12px;
+    font-weight: 600;
+}
+
+/* Buttons - aligned neatly */
+.teacher-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    margin-top: auto;
+}
+
+.teacher-card-actions a,
+.teacher-card-actions button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 44px;
+    padding: 10px 16px;
+    box-sizing: border-box;
+
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+.teacher-card-actions .view-profile-button {
+    border: 1px solid #5e9eff;
+}
+
+.teacher-card-actions .request-button {
+    border: none;
+    background: linear-gradient(135deg, #00b8d9, #5e9eff);
+    color: white;
+}
+
+/* Request feedback message */
+.teacher-request-message {
+    width: 100%;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* No teachers message */
+#registeredTeachers .no-teachers-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 24px;
+}
+
+/* Tablet and Mobile */
+@media (max-width: 768px) {
+    #registeredTeachers {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .registered-teacher-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 420px) {
+    .teacher-card-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .teacher-card-actions a,
+    .teacher-card-actions button {
+        width: 100%;
+    }
+}
+
+/* Registered Teachers Grid */
+#registeredTeachers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    margin-top: 24px;
+    align-items: stretch;
+}
+
+/* Individual Registered User Card */
+.registered-teacher-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 24px;
+
+    background: linear-gradient(
+        145deg,
+        rgba(59, 91, 253, 0.16),
+        rgba(94, 158, 255, 0.07)
+    );
+
+    border: 1px solid rgba(94, 158, 255, 0.28);
+    border-radius: 20px;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* Hover Animation */
+.registered-teacher-card:hover {
+    transform: translateY(-6px);
+    border-color: #3b5bfd;
+    box-shadow: 0 12px 32px rgba(59, 91, 253, 0.18);
+}
+
+/* User Avatar */
+.registered-teacher-card .teacher-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b5bfd, #168cff);
+
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+/* User Information */
+.registered-teacher-info {
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.registered-teacher-info h3 {
+    margin: 0 0 10px;
+    font-size: 21px;
+}
+
+.registered-teacher-info p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.registered-teacher-info .teacher-role {
+    opacity: 0.8;
+    font-size: 14px;
+}
+
+.registered-teacher-info .teacher-description {
+    font-size: 14px;
+}
+
+.registered-teacher-info .teacher-skills {
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Profile and Request Buttons */
+.teacher-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    width: 100%;
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+.teacher-card-actions a,
+.teacher-card-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+    padding: 11px 15px;
+    box-sizing: border-box;
+
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+}
+
+.teacher-card-actions .view-profile-button {
+    color: #70dfff;
+    border: 1px solid rgba(94, 158, 255, 0.5);
+    background: rgba(59, 91, 253, 0.12);
+}
+
+.teacher-card-actions .request-button {
+    color: white;
+    border: none;
+    background: linear-gradient(135deg, #078dff, #5e5bff);
+}
+
+.teacher-card-actions a:hover,
+.teacher-card-actions button:hover {
+    filter: brightness(1.15);
+}
+
+/* Request Feedback */
+.teacher-request-message {
+    width: 100%;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* No Registered Teachers */
+#registeredTeachers .no-teachers-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 24px;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+    #registeredTeachers {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    #registeredTeachers {
+        grid-template-columns: 1fr;
+    }
+
+    .registered-teacher-card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 380px) {
+    .teacher-card-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .teacher-card-actions a,
+    .teacher-card-actions button {
+        width: 100%;
+    }
+}

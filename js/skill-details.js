@@ -252,18 +252,39 @@ document.addEventListener("DOMContentLoaded", function () {
     // ==========================================
 
    
+
 function teachesSelectedSkill(teachSkills) {
     if (!Array.isArray(teachSkills)) {
         return false;
     }
 
     const aliases = {
-        "java": ["java", "core java", "java programming"],
-        "uiux": ["uiux", "ui ux", "ui/ux", "ui ux design", "ui/ux design"],
-        "english": ["english", "english speaking", "spoken english"],
-        "photography": ["photography", "photography basics"],
-        "guitar": ["guitar", "guitar basics"],
-        "webdev": [
+        java: [
+            "java",
+            "core java",
+            "java programming"
+        ],
+        uiux: [
+            "uiux",
+            "ui ux",
+            "ui/ux",
+            "ui ux design",
+            "ui/ux design"
+        ],
+        english: [
+            "english",
+            "english speaking",
+            "spoken english"
+        ],
+        photography: [
+            "photography",
+            "photography basics"
+        ],
+        guitar: [
+            "guitar",
+            "guitar basics"
+        ],
+        webdev: [
             "webdev",
             "web development",
             "html",
@@ -272,15 +293,12 @@ function teachesSelectedSkill(teachSkills) {
         ]
     };
 
-    const acceptedNames = (aliases[selectedSkill] || skill.searchNames)
-        .map(function (name) {
-            return normalize(name);
-        });
+    const acceptedNames = (
+        aliases[selectedSkill] || skill.searchNames
+    ).map(normalize);
 
     return teachSkills.some(function (teachSkill) {
-        const enteredSkill = normalize(teachSkill);
-
-        return acceptedNames.includes(enteredSkill);
+        return acceptedNames.includes(normalize(teachSkill));
     });
 }
 
