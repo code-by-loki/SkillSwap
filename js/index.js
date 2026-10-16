@@ -271,15 +271,31 @@ function renderNotifications() {
             function openNotification() {
                 markNotificationAsRead(notification.id);
 
-                const text = notification.message || "";
+               
+const text = notification.message || "";
+const type = notification.type || "";
 
-                const isRequestNotification =
-                    /wants to learn|request.*(accepted|rejected)|has been (accepted|rejected)|skill exchange request/i.test(text);
+// Request notifications → Requests page
+const isRequestNotification =
+    type === "request-status" ||
+    /wants to learn|request.*(accepted|rejected)|has been (accepted|rejected)|skill exchange request/i.test(text);
 
-                if (isRequestNotification) {
-                    window.location.href = "requests.html";
-                    return;
-                }
+if (isRequestNotification) {
+    window.location.href = "requests.html";
+    return;
+}
+
+// Session notifications → Sessions page
+const isSessionNotification =
+    type.startsWith("session-") ||
+    /session has been scheduled|session.*(cancelled|completed|rescheduled)|scheduled for/i.test(text);
+
+if (isSessionNotification) {
+    window.location.href = "sessions.html";
+    return;
+}
+
+renderNotifications();
 
                 renderNotifications();
             }

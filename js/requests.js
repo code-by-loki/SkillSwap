@@ -115,6 +115,51 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+
+    
+function createSessionNotification(session, message, type) {
+    try {
+        const notifications = JSON.parse(
+            localStorage.getItem("skillswapNotifications") || "[]"
+        );
+
+        if (!Array.isArray(notifications)) {
+            throw new Error("Invalid notification data");
+        }
+
+        const notificationUsers = [
+            session.userId,
+            session.partnerId
+        ];
+
+        notificationUsers.forEach(function (userId) {
+            if (!userId) return;
+
+            notifications.push({
+                id: crypto.randomUUID(),
+                userId: String(userId),
+                sessionId: String(session.id),
+                requestId: session.requestId,
+                type: type,
+                message: message,
+                read: false,
+                createdAt: new Date().toLocaleString()
+            });
+        });
+
+        localStorage.setItem(
+            "skillswapNotifications",
+            JSON.stringify(notifications)
+        );
+
+    } catch (error) {
+        console.error(
+            "Could not create session notification:",
+            error
+        );
+    }
+}
+
     // ==========================================
     // 6. CREATE SESSION
     // ==========================================
@@ -215,12 +260,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
             savedSessions.push(newSession);
 
-            localStorage.setItem(
-                sessionsStorageKey,
-                JSON.stringify(savedSessions)
-            );
+           
+           localStorage.setItem(
+           sessionsStorageKey,
+           JSON.stringify(savedSessions)
+           );
 
-            alert("Session created successfully!");
+           createSessionNotification(
+           newSession,
+           "A new " + newSession.skill +
+           " session has been scheduled for " +
+           newSession.date + " at " +
+           newSession.time + ".",
+           "session-created"
+           );
+
+          alert("Session created successfully!");
+
 
 
 

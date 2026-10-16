@@ -94,75 +94,85 @@ document.addEventListener("DOMContentLoaded", function () {
     // 4. OVERALL PROGRESS
     // ==========================================
 
-    function renderProgress(sessions) {
-        const total = sessions.length;
 
-        const completed = sessions.filter(function (session) {
-            return String(session.status).toLowerCase() === "completed";
-        });
+    
+function renderProgress(sessions) {
 
-        const upcoming = sessions.filter(function (session) {
-            return String(session.status).toLowerCase() === "upcoming";
-        });
+    // Exclude cancelled sessions from progress calculation.
+    const activeSessions = sessions.filter(function (session) {
+        return String(session.status).toLowerCase() !== "cancelled";
+    });
 
-        // Percentage is based on completed sessions out of all sessions.
-        const percentage = total === 0
-            ? 0
-            : Math.round((completed.length / total) * 100);
+    const total = activeSessions.length;
 
-        setText(totalSessionsElement, total);
-        setText(completedSessionsElement, completed.length);
-        setText(upcomingSessionsElement, upcoming.length);
-        setText(overallPercentage, percentage + "%");
-        setText(completionRate, percentage + "%");
+    const completed = activeSessions.filter(function (session) {
+        return String(session.status).toLowerCase() === "completed";
+    });
 
-        if (progressRing) {
-            progressRing.style.setProperty("--progress", percentage + "%");
-            progressRing.setAttribute(
-                "aria-label",
-                "Overall learning progress: " + percentage + "%"
-            );
-        }
+    const upcoming = activeSessions.filter(function (session) {
+        return String(session.status).toLowerCase() === "upcoming";
+    });
 
-        if (completionBar) {
-            completionBar.style.width = percentage + "%";
-        }
+    // Calculate progress using non-cancelled sessions only.
+    const percentage = total === 0
+        ? 0
+        : Math.round((completed.length / total) * 100);
 
-        if (total === 0) {
-            setText(progressSummary, "Your learning journey starts here.");
-            setText(
-                learningAdvice,
-                "Schedule your first skill-exchange session to start tracking progress."
-            );
-        } else if (completed.length === total) {
-            setText(progressSummary, "Amazing! All your sessions are completed.");
-            setText(
-                learningAdvice,
-                "Fantastic work! Keep exploring new skills and schedule your next session."
-            );
-        } else {
-            setText(
-                progressSummary,
-                completed.length + " of " + total + " sessions completed."
-            );
-            setText(
-                learningAdvice,
-                "Complete your upcoming sessions to increase your learning progress."
-            );
-        }
+    setText(totalSessionsElement, total);
+    setText(completedSessionsElement, completed.length);
+    setText(upcomingSessionsElement, upcoming.length);
+    setText(overallPercentage, percentage + "%");
+    setText(completionRate, percentage + "%");
 
-        // Count unique skills from completed sessions only.
-        const uniqueSkills = new Set(
-            completed.map(function (session) {
-                return String(session.skill || "").trim().toLowerCase();
-            }).filter(Boolean)
+    if (progressRing) {
+        progressRing.style.setProperty("--progress", percentage + "%");
+        progressRing.setAttribute(
+            "aria-label",
+            "Overall learning progress: " + percentage + "%"
         );
-
-        setText(skillsPractisedElement, uniqueSkills.size);
-
-        renderMilestones(completed.length);
-        renderHistory(sessions);
     }
+
+    if (completionBar) {
+        completionBar.style.width = percentage + "%";
+    }
+
+    if (total === 0) {
+        setText(progressSummary, "Your learning journey starts here.");
+        setText(
+            learningAdvice,
+            "Schedule your first skill-exchange session to start tracking progress."
+        );
+    } else if (completed.length === total) {
+        setText(progressSummary, "Amazing! All your sessions are completed.");
+        setText(
+            learningAdvice,
+            "Fantastic work! Keep exploring new skills and schedule your next session."
+        );
+    } else {
+        setText(
+            progressSummary,
+            completed.length + " of " + total + " sessions completed."
+        );
+        setText(
+            learningAdvice,
+            "Complete your upcoming sessions to increase your learning progress."
+        );
+    }
+
+    // Count unique skills from completed sessions only.
+    const uniqueSkills = new Set(
+        completed.map(function (session) {
+            return String(session.skill || "").trim().toLowerCase();
+        }).filter(Boolean)
+    );
+
+    setText(skillsPractisedElement, uniqueSkills.size);
+
+    renderMilestones(completed.length);
+
+    // Keep cancelled sessions visible in history.
+    renderHistory(sessions);
+}
 
     // ==========================================
     // 5. LEARNING MILESTONES

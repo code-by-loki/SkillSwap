@@ -247,53 +247,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    
     // ==========================================
     // 8. LEARNING PROGRESS
     // ==========================================
 
-    const progressData = readStorage(PROGRESS_KEY, null);
-
     if (learningProgress) {
-        let percentage = 0;
 
-        if (typeof progressData === "number") {
-            percentage = progressData;
-        } else if (progressData && typeof progressData === "object") {
-            const userProgress = progressData[String(currentUserId)];
-
-            if (typeof userProgress === "number") {
-                percentage = userProgress;
-            } else if (
-                userProgress &&
-                typeof userProgress.percentage === "number"
-            ) {
-                percentage = userProgress.percentage;
-            }
-        }
-
-        learningProgress.textContent =
-            Math.max(0, Math.min(100, percentage)) + "%";
-    }
-
-    // ==========================================
-    // 9. LOGOUT
-    // ==========================================
-
-    if (dashboardLogout) {
-        dashboardLogout.addEventListener("click", function () {
-            sessionStorage.removeItem(SESSION_KEY);
-            window.location.href = "login.html";
+        // Exclude cancelled sessions from progress calculation.
+        const activeSessions = mySessions.filter(function (session) {
+            return String(session.status || "").toLowerCase() !== "cancelled";
         });
+
+        const completedSessions = activeSessions.filter(function (session) {
+            return String(session.status || "").toLowerCase() === "completed";
+        });
+
+        const percentage = activeSessions.length === 0
+            ? 0
+            : Math.round(
+                (completedSessions.length / activeSessions.length) * 100
+            );
+
+        learningProgress.textContent = percentage + "%";
     }
 
-    // ==========================================
-    // 10. DASHBOARD MESSAGE
-    // ==========================================
-
-    if (dashboardMessage) {
-        dashboardMessage.textContent = currentUserId
-            ? ""
-            : "Please log in to view your personalized dashboard.";
-    }
 
 });

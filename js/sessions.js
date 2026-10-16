@@ -58,6 +58,250 @@ function saveSessions(sessions) {
     );
 }
 
+function createSessionUpdateNotification(session, action) {
+    try {
+        const notifications = JSON.parse(
+            localStorage.getItem("skillswapNotifications") || "[]"
+        );
+
+        if (!Array.isArray(notifications)) {
+            throw new Error("Invalid notification data");
+        }
+
+        const messageByAction = {
+            rescheduled:
+                "Your " + (session.skill || "skill exchange") +
+                " session has been rescheduled to " +
+                session.date + " at " + session.time + ".",
+
+            cancelled:
+                "Your " + (session.skill || "skill exchange") +
+                " session scheduled for " +
+                session.date + " at " + session.time +
+                " has been cancelled.",
+
+            completed:
+                "Your " + (session.skill || "skill exchange") +
+                " session has been marked as completed."
+        };
+
+        // Notify both participants.
+        const userIds = [
+            session.userId,
+            session.partnerId
+        ];
+
+        userIds.forEach(function (userId) {
+            if (!userId) return;
+
+            notifications.push({
+                id: crypto.randomUUID(),
+                userId: String(userId),
+                sessionId: String(session.id),
+                requestId: session.requestId,
+                type: "session-" + action,
+                message: messageByAction[action],
+                read: false,
+                createdAt: new Date().toLocaleString()
+            });
+        });
+
+        localStorage.setItem(
+            "skillswapNotifications",
+            JSON.stringify(notifications)
+        );
+
+    } catch (error) {
+        console.error(
+            "Could not create session update notification:",
+            error
+        );
+    }
+}
+
+
+ // ========================================
+ // 5A. SESSION REMINDER SYSTEM
+ // ========================================
+
+const NOTIFICATIONS_KEY = "skillswapNotifications";
+const REMINDER_CHECK_INTERVAL = 30 * 1000; // 30 seconds
+
+function getSessionStartDate(session) {
+    if (!session.date || !session.time) {
+        return null;
+    }
+
+    // Supports times such as "10:00 AM" and "10:00 PM".
+    const match = session.time.trim().match(
+        /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i
+    );
+
+    if (!match) {
+        console.warn("Unsupported session time:", session.time);
+        return null;
+    }
+
+    let hours = Number(match[1]);
+    const minutes = Number(match[2]);
+    const meridiem = match[3].toUpperCase();
+
+    if (
+        hours < 1 || hours > 12 ||
+        minutes < 0 || minutes > 59
+    ) {
+        return null;
+    }
+
+    if (meridiem === "AM") {
+        hours = hours === 12 ? 0 : hours;
+    } else {
+        hours = hours === 12 ? 12 : hours + 12;
+    }
+
+    const parts = session.date.split("-").map(Number);
+
+    if (parts.length !== 3) {
+        return null;
+    }
+
+    const startDate = new Date(
+        parts[0],
+        parts[1] - 1,
+        parts[2],
+        hours,
+        minutes,
+        0,
+        0
+    );
+
+    if (
+        startDate.getFullYear() !== parts[0] ||
+        startDate.getMonth() !== parts[1] - 1 ||
+        startDate.getDate() !== parts[2]
+    ) {
+        return null;
+    }
+
+    return startDate;
+}
+
+function createReminderNotification(session, reminderType) {
+    let notifications = [];
+
+    try {
+        notifications = JSON.parse(
+            localStorage.getItem(NOTIFICATIONS_KEY) || "[]"
+        );
+
+        if (!Array.isArray(notifications)) {
+            notifications = [];
+        }
+    } catch (error) {
+        console.error("Could not read notifications:", error);
+        return;
+    }
+
+    const reminderKey =
+        "session-reminder-" + reminderType + "-" + session.id;
+
+    // Do not create the same reminder more than once.
+    const alreadyExists = notifications.some(function (item) {
+        return (
+            String(item.userId) === String(currentUserId) &&
+            item.reminderKey === reminderKey
+        );
+    });
+
+    if (alreadyExists) {
+        return;
+    }
+
+    const messages = {
+        "24h": "Reminder: Your " + (session.skill || "skill exchange") +
+            " session is in 24 hours, on " +
+            session.date + " at " + session.time + ".",
+
+        "1h": "Reminder: Your " + (session.skill || "skill exchange") +
+            " session starts in 1 hour, at " + session.time + ".",
+
+        "start": "Your " + (session.skill || "skill exchange") +
+            " session is starting now!"
+    };
+
+    notifications.push({
+        id: crypto.randomUUID(),
+        userId: String(currentUserId),
+        sessionId: String(session.id),
+        requestId: session.requestId,
+        type: "session-reminder",
+        reminderKey: reminderKey,
+        message: messages[reminderType],
+        read: false,
+        createdAt: new Date().toLocaleString()
+    });
+
+    try {
+        localStorage.setItem(
+            NOTIFICATIONS_KEY,
+            JSON.stringify(notifications)
+        );
+    } catch (error) {
+        console.error("Could not save reminder:", error);
+    }
+}
+
+function checkSessionReminders() {
+    if (!currentUserId) {
+        return;
+    }
+
+    const now = Date.now();
+    const sessions = getMySessions();
+
+    sessions.forEach(function (session) {
+        if (session.status !== "Upcoming") {
+            return;
+        }
+
+        const startDate = getSessionStartDate(session);
+
+        if (!startDate) {
+            return;
+        }
+
+        const remaining = startDate.getTime() - now;
+
+        // Only generate reminders in their intended time windows.
+        if (remaining > 0 && remaining <= 24 * 60 * 60 * 1000 &&
+            remaining > 60 * 60 * 1000) {
+            createReminderNotification(session, "24h");
+        }
+
+        if (remaining > 0 && remaining <= 60 * 60 * 1000 &&
+            remaining > 60 * 1000) {
+            createReminderNotification(session, "1h");
+        }
+
+        if (remaining <= 60 * 1000 && remaining >= 0) {
+            createReminderNotification(session, "start");
+        }
+    });
+}
+
+// Check immediately and then every 30 seconds.
+checkSessionReminders();
+
+setInterval(checkSessionReminders, REMINDER_CHECK_INTERVAL);
+
+// Recheck when the browser tab becomes active.
+document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) {
+        checkSessionReminders();
+    }
+});
+
+
  // ========================================
  // 6. GET CURRENT USER'S SESSIONS
  // ========================================
@@ -238,6 +482,16 @@ function renderSessions() {
                 updateSessionStatus(session.id, "Completed");
             });
 
+            // Reschedule Session button
+const rescheduleButton = document.createElement("button");
+
+rescheduleButton.type = "button";
+rescheduleButton.textContent = "Reschedule Session";
+
+rescheduleButton.addEventListener("click", function () {
+    rescheduleSession(session.id);
+});
+
             const cancelButton = document.createElement("button");
 
             cancelButton.type = "button";
@@ -253,7 +507,11 @@ function renderSessions() {
                 }
             });
 
-            actions.append(completeButton, cancelButton);
+            actions.append(
+            completeButton,
+            rescheduleButton,
+            cancelButton
+           );
             card.appendChild(actions);
         }
 
@@ -262,11 +520,104 @@ function renderSessions() {
 }
 
 
+
+
+function rescheduleSession(sessionId) {
+    const allSessions = getSessions();
+
+    const session = allSessions.find(function (item) {
+        return (
+            String(item.id) === String(sessionId) &&
+            String(item.userId) === String(currentUserId)
+        );
+    });
+
+    if (!session) {
+        showMessage(
+            "Only the session creator can reschedule this session."
+        );
+        return;
+    }
+
+    if (session.status !== "Upcoming") {
+        showMessage("Only upcoming sessions can be rescheduled.");
+        return;
+    }
+
+    const newDate = prompt(
+        "Enter new session date (YYYY-MM-DD):",
+        session.date
+    );
+
+    if (!newDate) return;
+
+    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+    if (!datePattern.test(newDate)) {
+        alert("Enter date in YYYY-MM-DD format.");
+        return;
+    }
+
+    const parts = newDate.split("-").map(Number);
+
+    const parsedDate = new Date(
+        parts[0],
+        parts[1] - 1,
+        parts[2]
+    );
+
+    if (
+        parsedDate.getFullYear() !== parts[0] ||
+        parsedDate.getMonth() !== parts[1] - 1 ||
+        parsedDate.getDate() !== parts[2]
+    ) {
+        alert("Please enter a valid date.");
+        return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (parsedDate < today) {
+        alert("Please select today or a future date.");
+        return;
+    }
+
+    const newTime = prompt(
+        "Enter new session time (example: 10:00 AM):",
+        session.time
+    );
+
+    if (!newTime || !newTime.trim()) return;
+
+    session.date = newDate;
+    session.time = newTime.trim();
+
+    saveSessions(allSessions);
+
+    // Notify both participants about the new schedule.
+    createSessionUpdateNotification(session, "rescheduled");
+
+    // Recheck reminders using the updated date and time.
+    checkSessionReminders();
+
+    updateStatistics();
+    renderSessions();
+
+    showMessage("Session rescheduled successfully!");
+}
+
+
 // ========================================
 // 11. UPDATE SESSION STATUS
 // ========================================
 
+
 function updateSessionStatus(sessionId, newStatus) {
+    if (!["Completed", "Cancelled"].includes(newStatus)) {
+        return;
+    }
+
     const allSessions = getSessions();
 
     const sessionIndex = allSessions.findIndex(function (session) {
@@ -281,20 +632,37 @@ function updateSessionStatus(sessionId, newStatus) {
         return;
     }
 
-    if (allSessions[sessionIndex].status !== "Upcoming") {
+    const updatedSession = allSessions[sessionIndex];
+
+    if (updatedSession.status !== "Upcoming") {
         showMessage("Only upcoming sessions can be updated.");
         return;
     }
 
-    allSessions[sessionIndex].status = newStatus;
+    updatedSession.status = newStatus;
 
     saveSessions(allSessions);
+
+    if (newStatus === "Cancelled") {
+        createSessionUpdateNotification(
+            updatedSession,
+            "cancelled"
+        );
+    } else if (newStatus === "Completed") {
+        createSessionUpdateNotification(
+            updatedSession,
+            "completed"
+        );
+    }
 
     updateStatistics();
     renderSessions();
 
-    showMessage("Session marked as " + newStatus.toLowerCase() + ".");
+    showMessage(
+        "Session marked as " + newStatus.toLowerCase() + "."
+    );
 }
+
 
 
 // ========================================
