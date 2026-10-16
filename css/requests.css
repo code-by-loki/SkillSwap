@@ -19,12 +19,27 @@ body {
     background: #0b1020;
 }
 
-.requests-navbar .logo {
-    color: #70a5ff;
-    font-size: 25px;
-    font-weight: 800;
+
+
+.requests-navbar .details-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
     text-decoration: none;
+    font-size: 22px;
+    font-weight: 700;
+    flex-shrink: 0;
 }
+
+.requests-navbar .details-logo img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
 
 .requests-navbar nav {
     display: flex;

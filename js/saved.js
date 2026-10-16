@@ -5,14 +5,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const savedMessage = document.getElementById("savedMessage");
 
     const storageKey = "skillswapSavedSkills";
+    const sessionKey = "skillswapDemoSession";
 
     function getSavedSkills() {
+        const userId = sessionStorage.getItem(sessionKey);
+
+        if (!userId) {
+            window.location.replace("login.html");
+            return [];
+        }
+
         try {
             const data = JSON.parse(
                 localStorage.getItem(storageKey) || "[]"
             );
 
-            return Array.isArray(data) ? data : [];
+            if (!Array.isArray(data)) {
+                return [];
+            }
+
+            return data.filter(function (item) {
+                return item &&
+                    String(item.userId) === String(userId);
+            });
         } catch (error) {
             savedMessage.textContent =
                 "Unable to read saved skills from browser storage.";
@@ -20,6 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return [];
         }
     }
+
 
     function createElement(tag, className, text) {
         const element = document.createElement(tag);
@@ -87,26 +103,59 @@ document.addEventListener("DOMContentLoaded", function () {
 
             removeButton.type = "button";
 
-            removeButton.addEventListener("click", function () {
-                const currentSkills = getSavedSkills();
+            
+removeButton.addEventListener("click", function () {
+    const userId = sessionStorage.getItem("skillswapDemoSession");
 
-                currentSkills.splice(index, 1);
+    if (!userId) {
+        window.location.href = "login.html";
+        return;
+    }
 
-                try {
-                    localStorage.setItem(
-                        storageKey,
-                        JSON.stringify(currentSkills)
-                    );
+    try {
+        const allSkills = JSON.parse(
+            localStorage.getItem(storageKey) || "[]"
+        );
 
-                    savedMessage.textContent =
-                        skillName + " removed from saved skills.";
+        if (!Array.isArray(allSkills)) {
+            throw new Error("Invalid saved skills data");
+        }
 
-                    renderSavedSkills();
-                } catch (error) {
-                    savedMessage.textContent =
-                        "Could not remove this skill. Please try again.";
-                }
-            });
+        const currentSkill = skills[index];
+        const skillNameToRemove =
+            typeof currentSkill === "string"
+                ? currentSkill
+                : currentSkill.name || currentSkill.title;
+
+        const updatedSkills = allSkills.filter(function (item) {
+            if (!item || String(item.userId) !== String(userId)) {
+                return true;
+            }
+
+            const itemName =
+                typeof item === "string"
+                    ? item
+                    : item.name || item.title;
+
+            return itemName !== skillNameToRemove;
+        });
+
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(updatedSkills)
+        );
+
+        savedMessage.textContent =
+            skillNameToRemove + " removed from saved skills.";
+
+        renderSavedSkills();
+    } catch (error) {
+        console.error("Could not remove saved skill:", error);
+
+        savedMessage.textContent =
+            "Could not remove this skill. Please try again.";
+    }
+});
 
             actions.append(viewLink, removeButton);
             card.append(icon, title, details, actions);

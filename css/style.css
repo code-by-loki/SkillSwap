@@ -147,8 +147,8 @@ p {
 
 /* Login button */
 .login-btn {
-    color: #ffffff;
-    padding: 10px 16px;
+    color: white;
+    padding: 10px 20px;
     border: 1px solid #353e60;
     border-radius: 8px;
     background: linear-gradient(135deg,#c067db, #8b5cf6);
@@ -161,7 +161,7 @@ p {
 
 /* Register button */
 .register-btn {
-    padding:13.5px 20px;
+    padding:12px 20px;
     border-radius: 8px;
     background: linear-gradient(135deg, #5277ff, #8b5cf6);
     color: #ffffff;
@@ -871,8 +871,8 @@ p {
 /* Bell button */
 .notification-bell {
     position: relative;
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     display: flex;
     align-items: center;
     justify-content: center;

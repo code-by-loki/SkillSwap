@@ -179,9 +179,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // 5. SAVED SKILLS
     // ==========================================
 
-    function getSavedSkills() {
-        return readArray(SAVED_KEY);
+    
+function getSavedSkills() {
+    const userId = sessionStorage.getItem(SESSION_KEY);
+
+    if (!userId) {
+        return [];
     }
+
+    return readArray(SAVED_KEY).filter(function (item) {
+        return item &&
+            String(item.userId) === String(userId);
+    });
+}
+
 
     function updateSaveButton(button, isSaved) {
         button.classList.toggle("is-saved", isSaved);
@@ -193,52 +204,133 @@ document.addEventListener("DOMContentLoaded", function () {
             : "Save skill";
     }
 
-    function createSaveButton(skillName) {
-        const button = document.createElement("button");
+    
+function syncSaveButtons() {
+    if (!skillsGrid) return;
 
-        button.type = "button";
-        button.className = "save-skill-btn";
-        button.setAttribute("aria-label", "Save " + skillName);
-        button.setAttribute("aria-pressed", "false");
-        button.title = "Save skill";
-        button.textContent = "♡";
+    const userId = sessionStorage.getItem(SESSION_KEY);
 
-        const saved = getSavedSkills().some(function (item) {
-            return item && canonicalSkill(item.name) === canonicalSkill(skillName);
+    skillsGrid.querySelectorAll(".save-skill-btn").forEach(function (button) {
+        const card = button.closest(".explore-card");
+        const title = card ? card.querySelector("h3") : null;
+
+        const skillName = (
+            button.dataset.skillName ||
+            (title ? title.textContent.trim() : "") ||
+            (button.getAttribute("aria-label") || "")
+                .replace(/^Save\s+/i, "")
+                .replace(/^Remove\s+/i, "")
+        ).trim();
+
+        const isSaved = Boolean(userId) && getSavedSkills().some(function (item) {
+            return item &&
+                canonicalSkill(item.name) === canonicalSkill(skillName);
         });
 
-        updateSaveButton(button, saved);
 
-        button.addEventListener("click", function () {
-            const savedSkills = getSavedSkills();
+        updateSaveButton(button, isSaved);
 
-            const index = savedSkills.findIndex(function (item) {
-                return item &&
-                    canonicalSkill(item.name) === canonicalSkill(skillName);
+        console.log("Skill:", skillName, "Saved:", isSaved);
+    });
+}
+
+
+    
+function createSaveButton(skillName) {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "save-skill-btn";
+    button.dataset.skillName = skillName;
+
+    button.setAttribute("aria-label", "Save " + skillName);
+    button.setAttribute("aria-pressed", "false");
+    button.title = "Save skill";
+    button.textContent = "♡";
+
+    const userId = sessionStorage.getItem(SESSION_KEY);
+
+    const saved = userId && getSavedSkills().some(function (item) {
+        return item &&
+            canonicalSkill(item.name) === canonicalSkill(skillName);
+    });
+
+    updateSaveButton(button, Boolean(saved));
+
+    return button;
+}
+
+
+if (skillsGrid) {
+    skillsGrid.addEventListener("click", function (event) {
+        const button = event.target.closest(".save-skill-btn");
+
+        if (!button || !skillsGrid.contains(button)) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const userId = sessionStorage.getItem(SESSION_KEY);
+
+        if (!userId) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const card = button.closest(".explore-card");
+        const title = card ? card.querySelector("h3") : null;
+
+        
+const ariaLabel = button.getAttribute("aria-label") || "";
+
+const skillName = (
+    button.dataset.skillName ||
+    (title ? title.textContent.trim() : "") ||
+    ariaLabel.replace(/^Save\s+/i, "").replace(/^Remove\s+/i, "")
+).trim();
+
+
+        if (!skillName) {
+            return;
+        }
+
+        const allSavedSkills = readArray(SAVED_KEY);
+
+        const index = allSavedSkills.findIndex(function (item) {
+            return item &&
+                String(item.userId) === String(userId) &&
+                canonicalSkill(item.name) === canonicalSkill(skillName);
+        });
+
+        if (index !== -1) {
+            allSavedSkills.splice(index, 1);
+        } else {
+            allSavedSkills.push({
+                userId: String(userId),
+                name: skillName,
+                description: getSkillDescription(skillName),
+                category: getCategory(skillName),
+                link: getDetailsLink(skillName)
             });
+        }
 
-            if (index !== -1) {
-                savedSkills.splice(index, 1);
-            } else {
-                savedSkills.push({
-                    name: skillName,
-                    description: getSkillDescription(skillName),
-                    category: getCategory(skillName),
-                    link: getDetailsLink(skillName)
-                });
-            }
+        try {
+            localStorage.setItem(
+                SAVED_KEY,
+                JSON.stringify(allSavedSkills)
+            );
 
-            try {
-                localStorage.setItem(SAVED_KEY, JSON.stringify(savedSkills));
-                updateSaveButton(button, index === -1);
-            } catch (error) {
-                console.error("Could not save skill:", error);
-                alert("Could not save this skill. Check browser storage.");
-            }
-        });
-
-        return button;
-    }
+            updateSaveButton(
+                button,
+                index === -1
+            );
+        } catch (error) {
+            console.error("Could not save skill:", error);
+            alert("Could not save this skill. Check browser storage.");
+        }
+    });
+}
 
 
     // ==========================================
@@ -460,5 +552,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // 11. INITIALIZE
     // ==========================================
     filterSkills();
+    syncSaveButtons();
 
 });
