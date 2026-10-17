@@ -367,3 +367,67 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* =====================================
+   RECEIVED / SENT REQUEST TABS
+===================================== */
+
+.request-tabs {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 24px 0;
+}
+
+.request-tab {
+    padding: 12px 20px;
+
+    border: 1px solid rgba(130, 160, 210, 0.25);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.04);
+    color: #b8c5df;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.request-tab:hover {
+    background: rgba(71, 126, 255, 0.15);
+    color: #ffffff;
+}
+
+.request-tab.active {
+    background: #477eff;
+    border-color: #477eff;
+    color: #ffffff;
+}
+
+
+/* =====================================
+   CANCEL REQUEST BUTTON
+===================================== */
+
+.cancel-request-button {
+    padding: 10px 16px;
+
+    border: 1px solid rgba(255, 100, 120, 0.45);
+    border-radius: 8px;
+
+    background: rgba(220, 53, 69, 0.12);
+    color: #ff8c9a;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.cancel-request-button:hover {
+    background: #b52b3a;
+    color: #ffffff;
+}

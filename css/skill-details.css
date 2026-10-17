@@ -482,3 +482,57 @@
 }
 
 
+/* =====================================
+   SMART MATCH BADGES
+===================================== */
+
+.smart-match-badge {
+    display: inline-flex;
+    align-items: center;
+
+    max-width: 100%;
+    box-sizing: border-box;
+
+    padding: 8px 12px;
+
+    border: 1px solid rgba(112, 223, 255, 0.4);
+    border-radius: 999px;
+
+    background: rgba(22, 140, 255, 0.13);
+
+    color: #8ee8ff;
+
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* Perfect Swap Match */
+.smart-match-badge.perfect-swap-badge {
+    color: #b9ffd5;
+
+    background: linear-gradient(
+        135deg,
+        rgba(25, 135, 84, 0.24),
+        rgba(32, 201, 151, 0.12)
+    );
+
+    border-color: rgba(75, 220, 151, 0.65);
+
+    box-shadow: 0 0 18px rgba(32, 201, 151, 0.12);
+}
+
+.cancel-request-button {
+    background: #dc3545 !important;
+    color: #ffffff !important;
+    border: 1px solid #dc3545 !important;
+}
+
+.cancel-request-button:hover {
+    background: #b02a37 !important;
+    border-color: #b02a37 !important;
+}

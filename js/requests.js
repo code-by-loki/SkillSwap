@@ -12,7 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const acceptedRequests = document.getElementById("acceptedRequests");
     const refreshButton = document.getElementById("refreshButton");
     const pageMessage = document.getElementById("pageMessage");
-
+    const receivedTab = document.getElementById("receivedTab");
+    const sentTab = document.getElementById("sentTab");
+     // Default active tab
+    let activeTab = "received";
     // ==========================================
     // 2. STORAGE KEYS
     // ==========================================
@@ -277,14 +280,7 @@ function createSessionNotification(session, message, type) {
 
           alert("Session created successfully!");
 
-
-
-
-
-
-
-            
-
+        
             // Correct page navigation.
             window.location.href = "sessions.html";
 
@@ -390,6 +386,67 @@ function createSessionNotification(session, message, type) {
     }
 
     // ==========================================
+// CANCEL SENT REQUEST
+// ==========================================
+
+function cancelRequest(requestId) {
+
+    const currentUserId = sessionStorage.getItem(sessionKey);
+
+    if (!currentUserId) {
+        pageMessage.textContent = "Please log in again.";
+        return;
+    }
+
+    const requests = getRequests();
+
+    const request = requests.find(function (item) {
+        return String(item.id) === String(requestId);
+    });
+
+    if (!request) {
+        pageMessage.textContent = "Request not found.";
+        return;
+    }
+
+    // Request-ai anuppiya user mattum cancel pannalaam.
+    if (String(request.senderId) !== String(currentUserId)) {
+        pageMessage.textContent =
+            "You cannot cancel another user's request.";
+        return;
+    }
+
+    // Pending request mattum cancel panna mudiyum.
+    if ((request.status || "Pending") !== "Pending") {
+        pageMessage.textContent =
+            "Only pending requests can be cancelled.";
+
+        renderRequests();
+        return;
+    }
+
+    const confirmed = confirm(
+        "Are you sure you want to cancel this request?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    // Delete pannaama status Cancelled nu update pannuvom.
+    // Idhanaala request history preserve aagum.
+    request.status = "Cancelled";
+    request.cancelledAt = new Date().toISOString();
+
+    if (saveRequests(requests)) {
+
+        pageMessage.textContent =
+            "Your request has been cancelled successfully.";
+
+        renderRequests();
+    }
+}
+    // ==========================================
     // 10. RENDER REQUESTS
     // ==========================================
 
@@ -415,10 +472,16 @@ function createSessionNotification(session, message, type) {
             return;
         }
 
-        // Display only requests sent TO the logged-in user.
-        const requests = allRequests.filter(function (request) {
-            return String(request.receiverId) === String(currentUserId);
-        });
+        // Received / Sent requests filter.
+const requests = allRequests.filter(function (request) {
+
+    if (activeTab === "received") {
+        return String(request.receiverId) === String(currentUserId);
+    }
+
+    return String(request.senderId) === String(currentUserId);
+
+});
 
         totalRequests.textContent = requests.length;
 
@@ -512,7 +575,7 @@ function createSessionNotification(session, message, type) {
             skills.append(wantedBox, offeredBox);
             card.append(cardTop, skills);
 
-            // Pending requests: Accept and Reject buttons.
+               // Pending requests: Accept and Reject buttons.
             if (status === "Pending") {
 
                 const actions = createElement("div", "request-actions");
@@ -586,6 +649,47 @@ function createSessionNotification(session, message, type) {
     if (refreshButton) {
         refreshButton.addEventListener("click", renderRequests);
     }
+
+    // ==========================================
+// REQUEST TAB SWITCHING
+// ==========================================
+
+if (receivedTab) {
+
+    receivedTab.addEventListener("click", function () {
+
+        activeTab = "received";
+
+        receivedTab.classList.add("active");
+        sentTab.classList.remove("active");
+
+        receivedTab.setAttribute("aria-selected", "true");
+        sentTab.setAttribute("aria-selected", "false");
+
+        renderRequests();
+
+    });
+
+}
+
+
+if (sentTab) {
+
+    sentTab.addEventListener("click", function () {
+
+        activeTab = "sent";
+
+        sentTab.classList.add("active");
+        receivedTab.classList.remove("active");
+
+        sentTab.setAttribute("aria-selected", "true");
+        receivedTab.setAttribute("aria-selected", "false");
+
+        renderRequests();
+
+    });
+
+}
 
     // ==========================================
     // 12. INITIAL PAGE LOAD

@@ -187,6 +187,141 @@ document.addEventListener("DOMContentLoaded", function () {
             "SkillSwap Member"
         );
     }
+ 
+
+    // ==========================================
+// SMART MATCHMAKING HELPERS
+// ==========================================
+
+// Skill names-ai standard format-ku kondu varum.
+function canonicalSkill(value) {
+    const normalized = normalize(value)
+        .replace(/[^a-z0-9]/g, "");
+
+    const aliases = {
+        corejava: "java",
+        javaprogramming: "java",
+
+        uiux: "uiuxdesign",
+        uiuxdesign: "uiuxdesign",
+        uxui: "uiuxdesign",
+
+        spokenenglish: "english",
+        englishspeaking: "english",
+
+        photographybasics: "photography",
+        guitarbasics: "guitar",
+
+        webdev: "webdevelopment",
+        html: "webdevelopment",
+        css: "webdevelopment",
+        javascript: "webdevelopment"
+    };
+
+    return aliases[normalized] || normalized;
+}
+
+
+// Evvalavu skills match aagudhu nu percentage calculate pannum.
+function getMatchCoverage(skillsToMatch, offeredSkills) {
+
+    if (
+        !Array.isArray(skillsToMatch) ||
+        !Array.isArray(offeredSkills) ||
+        skillsToMatch.length === 0
+    ) {
+        return 0;
+    }
+
+    const offered = new Set(
+        offeredSkills.map(canonicalSkill)
+    );
+
+    const wanted = [
+        ...new Set(skillsToMatch.map(canonicalSkill))
+    ];
+
+    const matched = wanted.filter(function (skillName) {
+        return offered.has(skillName);
+    }).length;
+
+    return Math.round(
+        (matched / wanted.length) * 100
+    );
+}
+
+
+// Rendu users-kum mutual match irukka nu check pannum.
+function getSmartMatch(currentDetails, teacherDetails) {
+
+    const myTeach = Array.isArray(currentDetails.teachSkills)
+        ? currentDetails.teachSkills
+        : [];
+
+    const myLearn = Array.isArray(currentDetails.learnSkills)
+        ? currentDetails.learnSkills
+        : [];
+
+    const theirTeach = Array.isArray(teacherDetails.teachSkills)
+        ? teacherDetails.teachSkills
+        : [];
+
+    const theirLearn = Array.isArray(teacherDetails.learnSkills)
+        ? teacherDetails.learnSkills
+        : [];
+
+
+    // Namma learn panna virumbura skills-ai
+    // teacher teach panna mudiyuma?
+    const learningCoverage = getMatchCoverage(
+        myLearn,
+        theirTeach
+    );
+
+
+    // Teacher learn panna virumbura skills-ai
+    // namma teach panna mudiyuma?
+    const teachingCoverage = getMatchCoverage(
+        theirLearn,
+        myTeach
+    );
+
+
+    const directions = [
+        myLearn.length ? learningCoverage : null,
+        theirLearn.length ? teachingCoverage : null
+    ].filter(function (value) {
+        return value !== null;
+    });
+
+
+    if (directions.length === 0) {
+        return null;
+    }
+
+
+    // Rendu direction-oda average percentage.
+    const percentage = Math.round(
+        directions.reduce(function (sum, value) {
+            return sum + value;
+        }, 0) / directions.length
+    );
+
+
+    // Rendu direction-layum 100% match irundha Perfect Swap.
+    const perfectSwap =
+        myLearn.length > 0 &&
+        theirLearn.length > 0 &&
+        learningCoverage === 100 &&
+        teachingCoverage === 100;
+
+
+    return {
+        percentage: percentage,
+        perfectSwap: perfectSwap
+    };
+}
+
 
     // ==========================================
     // 5. VALIDATE SELECTED SKILL
@@ -353,6 +488,57 @@ function teachesSelectedSkill(teachSkills) {
             const card = document.createElement("article");
             card.className = "registered-teacher-card";
 
+            // Current logged-in user details
+const currentUser = users.find(function (user) {
+    return currentUserId &&
+        String(user.id) === String(currentUserId);
+});
+
+const currentDetails = currentUser
+    ? (detailsByUser[currentUser.id] || {})
+    : null;
+
+
+// Match percentage calculate pannuvom.
+const match = currentDetails
+    ? getSmartMatch(currentDetails, details)
+    : null;
+
+
+// Badge create pannuvom.
+if (match) {
+
+    const matchBadge = document.createElement("div");
+
+    matchBadge.className = match.perfectSwap
+        ? "smart-match-badge perfect-swap-badge"
+        : "smart-match-badge";
+
+
+    if (match.perfectSwap) {
+
+        matchBadge.textContent =
+            "⚡ PERFECT SWAP MATCH! · 100%";
+
+    } else {
+
+        matchBadge.textContent =
+            "✨ Skill Match · " + match.percentage + "%";
+
+    }
+
+
+    matchBadge.setAttribute(
+        "aria-label",
+        match.perfectSwap
+            ? "Perfect mutual skill swap match, 100 percent"
+            : "Skill compatibility " + match.percentage + " percent"
+    );
+
+
+    card.appendChild(matchBadge);
+}
+
             // Avatar
             const avatar = document.createElement("div");
             avatar.className = "teacher-avatar";
@@ -396,17 +582,100 @@ function teachesSelectedSkill(teachSkills) {
 
             // Request button
             const requestButton = document.createElement("button");
-            requestButton.type = "button";
-            requestButton.className = "request-button teacher-request-button";
-            requestButton.textContent = "Request to Learn";
 
-            const message = document.createElement("p");
-            message.className = "teacher-request-message";
-            message.setAttribute("aria-live", "polite");
+requestButton.type = "button";
+requestButton.className = "request-button teacher-request-button";
 
-            requestButton.addEventListener("click", function () {
-                sendRequest(teacher, requestButton, message);
+const message = document.createElement("p");
+message.className = "teacher-request-message";
+message.setAttribute("aria-live", "polite");
+
+// Check the existing request status
+function updateRequestButton() {
+    const currentUserId = sessionStorage.getItem(sessionKey);
+    const requests = readArray("skillswapDemoRequests");
+
+    const existingRequest = requests.find(function (request) {
+        return (
+            String(request.senderId) === String(currentUserId) &&
+            String(request.receiverId) === String(teacher.id) &&
+            String(request.skill || "").toLowerCase() ===
+                String(selectedSkill.name || "").toLowerCase() &&
+            ["pending", "accepted"].includes(
+                String(request.status || "Pending").toLowerCase()
+            )
+        );
+    });
+
+    requestButton.classList.remove("cancel-request-button");
+
+    if (existingRequest) {
+        const status = String(
+            existingRequest.status || "Pending"
+        ).toLowerCase();
+
+        if (status === "pending") {
+            requestButton.textContent = "Cancel Request";
+            requestButton.classList.add("cancel-request-button");
+            requestButton.disabled = false;
+        } else {
+            requestButton.textContent = "Request Accepted";
+            requestButton.disabled = true;
+        }
+    } else {
+        requestButton.textContent = "Request to Learn";
+        requestButton.disabled = false;
+    }
+
+    return existingRequest;
+}
+
+updateRequestButton();
+
+requestButton.addEventListener("click", function () {
+    const existingRequest = updateRequestButton();
+
+    if (existingRequest) {
+        if (
+            String(existingRequest.status || "Pending").toLowerCase() ===
+            "pending"
+        ) {
+            const confirmed = confirm(
+                "Are you sure you want to cancel this request?"
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            const requests = readArray("skillswapDemoRequests");
+
+            const request = requests.find(function (item) {
+                return String(item.id) === String(existingRequest.id);
             });
+
+            if (request) {
+                request.status = "Cancelled";
+                request.cancelledAt = new Date().toISOString();
+
+                localStorage.setItem(
+                    "skillswapDemoRequests",
+                    JSON.stringify(requests)
+                );
+
+                message.textContent = "Request cancelled successfully.";
+                updateRequestButton();
+            }
+        }
+
+        return;
+    }
+
+    sendRequest(teacher, requestButton, message);
+
+    // Refresh the button after the request is sent.
+    setTimeout(updateRequestButton, 100);
+    });
 
             const actions = document.createElement("div");
             actions.className = "teacher-card-actions";
